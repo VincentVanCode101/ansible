@@ -1,0 +1,7 @@
+---
+- name: Update Apt
+  become: true
+  ansible.builtin.apt:
+    force_apt_get: true
+    update_cache: true
+    state: present

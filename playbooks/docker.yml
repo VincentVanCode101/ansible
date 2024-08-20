@@ -1,0 +1,70 @@
+---
+- name: Docker Setup
+  hosts: localhost
+  become: true
+
+  vars_files:
+    - vars.yml
+
+  pre_tasks:
+    - name: Include pre-tasks to update apt
+      import_tasks: update_apt.yml
+
+  tasks:
+    - name: Docker | Uninstall old versions and conflicting packages
+      ansible.builtin.shell: |
+        for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do
+          apt-get remove -y $pkg || true
+        done
+
+    - name: Docker | Install required packages
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
+
+    - name: Docker | Create directory for keyring
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Docker | Remove Docker GPG key file
+      file:
+        path: /etc/apt/keyrings/docker.gpg
+        state: absent
+
+    - name: Docker | Download Docker GPG key
+      ansible.builtin.shell: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+    - name: Docker | Set permissions for Docker GPG key
+      file:
+        path: /etc/apt/keyrings/docker.gpg
+        mode: '0644'
+
+    - name: Docker | Add Docker repository lines
+      ansible.builtin.shell: |
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu  $(. /etc/os-release && echo $VERSION_CODENAME) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    - name: Docker | Update APT cache again
+      apt:
+        update_cache: yes
+
+    - name: Docker | Install Docker packages
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Docker | Add the user {{ current_user }} to the docker Group
+      user:
+        name: "{{ current_user }}"
+        groups: docker
+        append: true
