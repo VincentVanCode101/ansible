@@ -6,7 +6,7 @@
     - vars.yml
 
   tasks:
-    - name: Install special packages (fzf) # Apt version of fzf is way to old
+    - name: FZF | Install special packages (fzf) # Apt version of fzf is way to old
       become: false
       become_user: "{{ current_user}}"
       ansible.builtin.git:
