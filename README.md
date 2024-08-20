@@ -4,7 +4,7 @@
 
 1.
 ```bash
-sudo apt install curl git
+sudo apt install curl
 ```
 
 2.
@@ -17,5 +17,6 @@ curl https://raw.githubusercontent.com/VincentVanCode101/ansible/main/resources/
 
 3.
 ```bash
+cd playbooks
 ansible-playbook passwordless_sudo.yml --ask-become-pass
 ```
