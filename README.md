@@ -29,6 +29,9 @@ ansible-playbook playbooks/tmux.yml
 ansible-playbook playbooks/install_zsh.yml # Make sure to log-out and in again for this to take affect
 ansible-playbook playbooks/brave_browser.yml
 ansible-playbook playbooks/fzf.yml # On a new system for it to take affect, you have to call ~/.fzf/install
+ansible-playbook playbooks/core_apt.yml
+ansible-playbook playbooks/i3.yml
+ansible-playbook playbooks/de-chris.yml # Use with setxkbmap de-chris
 ```
 
 # Ponderings
