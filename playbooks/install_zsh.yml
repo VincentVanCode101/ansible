@@ -1,0 +1,47 @@
+- hosts: localhost
+  pre_tasks:
+    - include: update_apt.yml
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+  - name: ZSH | Ensure Zsh with dependencies are installed
+    apt:
+      name: "{{ ['zsh'] + zsh_dependencies }}"
+      state: present
+      update_cache: yes
+    become: true
+
+  - name: ZSH | Ensure zsh is the default shell
+    user:
+      name: "{{ username }}"
+      shell: "/usr/bin/zsh"
+    become: true
+
+  - name: ZSH | Download Oh My Zsh installation script
+    get_url:
+      url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+      dest: /tmp/install_ohmyzsh.sh
+
+  - name: ZSH | Run Oh My Zsh installation script
+    command: sh /tmp/install_ohmyzsh.sh --unattended
+    register: ohmyzsh_result
+    failed_when: "'FAILED' in ohmyzsh_result.stderr"
+  
+  - name: ZSH | Ensure zsh is the default shell
+    user:
+      name: "{{ current_user }}"
+      shell: "/usr/bin/zsh"
+    become: true
+
+  - name: ZSH | Clone zsh-autosuggestions
+    ansible.builtin.git:
+      repo: 'https://github.com/zsh-users/zsh-autosuggestions.git'
+      dest: "{{ zsh_autosuggestions_dest }}"
+
+  - name: ZSH | Clone Powerlevel10k theme
+    ansible.builtin.git:
+      repo: 'https://github.com/romkatv/powerlevel10k.git'
+      dest: "{{ powerlevel10k_dest }}"
+      depth: 1
