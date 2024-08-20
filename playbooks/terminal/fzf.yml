@@ -1,9 +1,9 @@
 ---
-- name: Install Fuzzyfinder
+- name: FZF | Install Fuzzyfinder
   hosts: localhost
 
   vars_files:
-    - vars.yml
+    - ../vars.yml
 
   tasks:
     - name: FZF | Install special packages (fzf) # Apt version of fzf is way to old

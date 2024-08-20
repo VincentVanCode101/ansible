@@ -4,8 +4,9 @@
   become: true
 
   pre_tasks:
-    - name: Include pre-tasks to update apt
-      import_tasks: ../update_apt.yml
+    - name: Update APT cache
+      include_role:
+        name: update_apt
 
   tasks:
     - name: Brave Browser | required libraries for brave

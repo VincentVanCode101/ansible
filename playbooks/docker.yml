@@ -1,5 +1,5 @@
 ---
-- name: Docker Setup
+- name: Docker | Install Docker
   hosts: localhost
   become: true
 
@@ -7,8 +7,9 @@
     - vars.yml
 
   pre_tasks:
-    - name: Include pre-tasks to update apt
-      import_tasks: update_apt.yml
+    - name: Update APT cache
+      include_role:
+        name: update_apt
 
   tasks:
     - name: Docker | Uninstall old versions and conflicting packages

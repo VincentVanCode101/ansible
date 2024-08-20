@@ -3,8 +3,9 @@
   hosts: localhost
 
   pre_tasks:
-    - name: Include pre-tasks to update apt
-      import_tasks: update_apt.yml
+    - name: Update APT cache
+      include_role:
+        name: update_apt
 
   tasks:
     - name: I3 | Download the i3wm signing key (tarball) from sur5r.net

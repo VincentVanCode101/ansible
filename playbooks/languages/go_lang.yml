@@ -1,10 +1,10 @@
 ---
-- name: Go-Lang Setup
+- name: Go-Lang | Install the Go-Lang language
   hosts: localhost
   become: true
 
   vars_files:
-    - vars.yml
+    - ../vars.yml
   vars:
     goarch: "{{ ansible_machine | replace('x86_64', 'amd64') | replace('aarch64', 'arm64') }}"
     goos: "{{ ansible_system | lower }}"

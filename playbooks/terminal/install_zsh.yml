@@ -1,13 +1,14 @@
 ---
-- name: Install ZSH
+- name: ZSH | Install ZSH
   hosts: localhost
 
   vars_files:
     - vars.yml
 
   pre_tasks:
-    - name: Include pre-tasks to update apt
-      import_tasks: update_apt.yml
+    - name: Update APT cache
+      include_role:
+        name: update_apt
 
   tasks:
     - name: ZSH | Ensure Zsh with dependencies are installed

@@ -1,10 +1,11 @@
 ---
-- name: Install core apt-packages
+- name: Apt-Packages | Install core apt-packages
   hosts: localhost
 
   pre_tasks:
-    - name: Include pre-tasks to update apt
-      import_tasks: update_apt.yml
+    - name: Update APT cache
+      include_role:
+        name: update_apt
 
   tasks:
     - name: Apt-Packages | All the apt-packages I like

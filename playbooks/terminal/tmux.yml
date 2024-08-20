@@ -1,14 +1,16 @@
+- name: Tmux | Install tmux
 - hosts: localhost
 
   vars_files:
-    - vars.yml
+    - ../vars.yml
 
   pre_tasks:
-    - name: Include pre-tasks to update apt
-      import_tasks: update_apt.yml
+    - name: Update APT cache
+      include_role:
+        name: update_apt
 
   tasks:
-    - name: installing tmux
+    - name: Tmux | Installing tmux
       become: true
       apt:
         name: tmux
