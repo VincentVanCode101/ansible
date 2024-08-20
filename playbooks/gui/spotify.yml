@@ -1,11 +1,11 @@
+---
 - name: Spotify | Install Spotify
   hosts: localhost
   become: true
 
-
   pre_tasks:
     - name: Include pre-tasks to update apt
-      import_tasks: update_apt.yml
+      import_tasks: ../update_apt.yml
 
   tasks:
   - name: Spotify | Add Spotify GPG key

@@ -5,7 +5,7 @@
 
   pre_tasks:
     - name: Include pre-tasks to update apt
-      import_tasks: update_apt.yml
+      import_tasks: ../update_apt.yml
 
   tasks:
   - name: VSCode | Install neccessary apt packages
