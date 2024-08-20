@@ -7,19 +7,20 @@
     - name: Include pre-tasks to update apt
       import_tasks: update_apt.yml
 
-- name: Brave Browser | required libraries for brave
-  apt:
-    name: ["curl", "apt-transport-https"]
+  tasks:
+    name: Brave Browser | required libraries for brave
+    apt:
+      name: ["curl", "apt-transport-https"]
 
-- name: Brave Browser | Archive-keyring.gpg download
-  get_url:
-    url: https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-    dest: /usr/share/keyrings/brave-browser-archive-keyring.gpg
+    name: Brave Browser | Archive-keyring.gpg download
+    get_url:
+      url: https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+      dest: /usr/share/keyrings/brave-browser-archive-keyring.gpg
 
-- name: Brave Browser | PPA setting
-  shell: echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list
+    name: Brave Browser | PPA setting
+    shell: echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list
 
-- name: Brave Browser | Apt installation
-  apt:
-    update_cache: yes
-    name: brave-browser
+    name: Brave Browser | Apt installation
+    apt:
+      update_cache: yes
+      name: brave-browser
