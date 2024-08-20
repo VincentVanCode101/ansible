@@ -1,0 +1,21 @@
+---
+- name: Install core apt-packages
+  hosts: localhost
+
+  pre_tasks:
+    - name: Include pre-tasks to update apt
+      import_tasks: update_apt.yml
+
+  tasks:
+    - name: Apt-Packages | All the apt-packages I like
+      become: true
+      apt:
+        name: 
+          - ripgrep
+          - pavucontrol
+          - xclip
+          - jq
+          - tldr
+          - shutter
+        state: present
+        update_cache: yes
