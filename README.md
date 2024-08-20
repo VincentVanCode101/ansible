@@ -28,12 +28,10 @@ ansible-playbook playbooks/docker.yml
 ansible-playbook playbooks/system/ufw.yml
 ansible-playbook playbooks/system/core_apt.yml
 ansible-playbook playbooks/system/de-chris.yml # Use with setxkbmap de-chris (I guess you have to log-out and in again for this to take affec)
+ansible-playbook playbooks/system/i3.yml # Log-out and in again to choose the i3 window-manager option
 
 # Languages
 ansible-playbook playbooks/languages/go_lang.yml
-
-#Windowmanager
-ansible-playbook playbooks/i3.yml # Log-out and in again to choose the i3 window-manager option
 
 # Terminal
 ansible-playbook playbooks/terminal/neovim.yml
