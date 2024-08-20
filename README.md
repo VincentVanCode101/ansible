@@ -31,7 +31,8 @@ ansible-playbook playbooks/brave_browser.yml
 ansible-playbook playbooks/fzf.yml # On a new system for it to take affect, you have to call ~/.fzf/install
 ansible-playbook playbooks/core_apt.yml
 ansible-playbook playbooks/i3.yml
-ansible-playbook playbooks/de-chris.yml # Use with setxkbmap de-chris
+ansible-playbook playbooks/de-chris.yml # Use with setxkbmap de-chris (I guess you have to log-out and in again for this to take affec)
+ansible-playbook playbooks/neovim.yml
 ```
 
 # Ponderings

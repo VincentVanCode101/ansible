@@ -1,4 +1,7 @@
 current_user: "{{ lookup('ansible.builtin.env', 'USER') }}"
+home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+personal: "{{ home }}/personal"
+
 oh_my_zsh_path: "/home/{{ current_user }}/.oh-my-zsh"
 zshrc_path: "/home/{{ current_user }}/.zshrc"
 zsh_profile_path: "/home/{{ current_user }}/.zsh_profile"
