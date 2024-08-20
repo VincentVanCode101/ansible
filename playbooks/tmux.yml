@@ -3,6 +3,10 @@
   vars_files:
     - vars.yml
 
+  pre_tasks:
+    - name: Include pre-tasks to update apt
+      import_tasks: update_apt.yml
+
   tasks:
     - name: installing tmux
       become: true
