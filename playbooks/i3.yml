@@ -2,8 +2,9 @@
 - name: Install core apt-packages
   hosts: localhost
 
-  vars_files:
-    - vars.yml
+  pre_tasks:
+    - name: Include pre-tasks to update apt
+      import_tasks: update_apt.yml
 
   tasks:
     - name: I3 | Download the i3wm signing key (tarball) from sur5r.net
