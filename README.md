@@ -17,6 +17,11 @@ curl https://raw.githubusercontent.com/VincentVanCode101/ansible/main/resources/
 
 3.
 ```bash
-cd playbooks
-ansible-playbook passwordless_sudo.yml --ask-become-pass
+ansible-playbook playbooks/passwordless_sudo.yml --ask-become-pass
+```
+# 4. Have fun
+
+```bash
+ansible-playbook playbooks/docker.yml
+ansible-playbook playbooks/ufw.yml
 ```
