@@ -17,7 +17,8 @@
         update_cache: yes
       become: true
 
-  # This is another one of the items i cannot seem to figure out.  I am using root but i am not getting this to change forever...
+  # This is another one of the items I cannot seem to figure out.  I am using root but I am not getting this to change forever...
+  # Nvm, guess I solved it... you have to log out and in again
     - name: ZSH | Ensure zsh is the default shell
       user:
         name: "{{ current_user }}"

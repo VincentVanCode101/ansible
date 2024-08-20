@@ -24,4 +24,7 @@ ansible-playbook playbooks/passwordless_sudo.yml --ask-become-pass
 ```bash
 ansible-playbook playbooks/docker.yml
 ansible-playbook playbooks/ufw.yml
+ansible-playbook playbooks/go_lang.yml
+ansible-playbook playbooks/tmux.yml
+ansible-playbook playbooks/install_zsh.yml # Make sure to log-out and in again for this to take affect
 ```
