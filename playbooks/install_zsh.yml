@@ -19,7 +19,7 @@
 
     - name: ZSH | Ensure zsh is the default shell
       user:
-        name: "{{ username }}"
+        name: "{{ current_user }}"
         shell: "/usr/bin/zsh"
       become: true
 
