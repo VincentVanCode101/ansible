@@ -27,4 +27,8 @@ ansible-playbook playbooks/ufw.yml
 ansible-playbook playbooks/go_lang.yml
 ansible-playbook playbooks/tmux.yml
 ansible-playbook playbooks/install_zsh.yml # Make sure to log-out and in again for this to take affect
+ansible-playbook playbooks/brave_browser.yml
 ```
+
+# Ponderings
+- should I instal node? npm? java? cpp-comiler? clang?
