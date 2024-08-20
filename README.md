@@ -28,7 +28,7 @@ ansible-playbook playbooks/go_lang.yml
 ansible-playbook playbooks/tmux.yml
 ansible-playbook playbooks/install_zsh.yml # Make sure to log-out and in again for this to take affect
 ansible-playbook playbooks/brave_browser.yml
-ansible-playbook playbooks/fzf.yml
+ansible-playbook playbooks/fzf.yml # On a new system for it to take affect, you have to call ~/.fzf/install
 ```
 
 # Ponderings
