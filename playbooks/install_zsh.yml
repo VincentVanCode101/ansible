@@ -1,8 +1,10 @@
-- hosts: localhost
+---
+- name: Install ZSH
+  hosts: localhost
 
   pre_tasks:
     - name: Include pre-tasks to update apt
-    - include: update_apt.yml
+      include: update_apt.yml
 
   vars_files:
     - vars.yml
