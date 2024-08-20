@@ -23,3 +23,12 @@
           - make # Should always be present on linux but you never know
         state: present
         update_cache: yes
+
+    - name: Check if tldr is installed
+      command: which tldr
+      register: tldr_installed
+      ignore_errors: true
+
+    - name: Update tldr if installed
+      command: tldr --update
+      when: tldr_installed.rc == 0
