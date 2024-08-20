@@ -1,0 +1,25 @@
+- name: Install Spotify
+  hosts: localhost
+  become: true
+
+
+  pre_tasks:
+    - name: Include pre-tasks to update apt
+      import_tasks: update_apt.yml
+
+  tasks:
+  - name: Spotify | Add Spotify GPG key
+    ansible.builtin.apt_key:
+      url: https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg
+      state: present
+
+  - name: Spotify | Add Spotify repository
+    ansible.builtin.apt_repository:
+      repo: 'deb http://repository.spotify.com stable non-free'
+      state: present
+
+  - name: Spotify | Install spotify-client
+    apt:
+      name: ["spotify-client"]
+      state: present
+      update_cache: yes

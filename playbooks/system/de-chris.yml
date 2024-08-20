@@ -6,7 +6,7 @@
   tasks:
     - name: Keyboard-Layout | Copy de-chris to /usr/share/X11/xkb/symbols
       copy:
-        src: ../resources/de-chris
+        src: ../../resources/de-chris
         dest: /usr/share/X11/xkb/symbols/de-chris
         owner: root
         group: root
