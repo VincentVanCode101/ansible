@@ -9,13 +9,13 @@
         name: update_apt
 
   tasks:
-  - name: VSCode | Install neccessary apt packages
-    ansible.builtin.apt:
-      name:
-        - wget
-        - gpg
-      state: present
-      update_cache: yes
+    - name: VSCode | Install neccessary apt packages
+      ansible.builtin.apt:
+        name:
+          - wget
+          - gpg
+        state: present
+        update_cache: yes
 
     - name: VSCode | Download and add the Microsoft GPG key
       ansible.builtin.get_url:
