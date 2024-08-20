@@ -1,5 +1,5 @@
 ---
-- name: Copy de-chris keyboard layout to X11 xkb symbols
+- name: Keyboard-Layout | Copy de-chris keyboard layout to X11 xkb symbols
   hosts: localhost
   become: true
 

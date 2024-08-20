@@ -1,4 +1,4 @@
-- name: Install Spotify
+- name: Spotify | Install Spotify
   hosts: localhost
   become: true
 

@@ -1,5 +1,5 @@
 ---
-- name: Install Brave browser
+- name: Brave Browser | Install Brave browser
   hosts: localhost
   become: true
 

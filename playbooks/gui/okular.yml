@@ -1,4 +1,5 @@
-- name: Install Gimp
+---
+- name: Okular | Install pdf-reader (okular)
   hosts: localhost
   become: true
 
@@ -7,12 +8,8 @@
       import_tasks: update_apt.yml
 
   tasks:
-  - name: KeePassXC | Add KeePassXC PPA
-    ansible.builtin.apt_repository:
-      repo: ppa:phoerious/keepassxc
-      state: present
-
-  - name: KeePassXC | Install KeePassXC
-    apt:
-      name: ["keepassxc"]
-      state: present
+    - name: Okular | Install pdf-reader (okular)
+      become: true
+      apt:
+        name: ["okular"]
+        state: present

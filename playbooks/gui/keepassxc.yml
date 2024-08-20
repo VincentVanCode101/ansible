@@ -1,4 +1,5 @@
-- name: Install KeePassXC
+---
+- name: KeePassXC | Install KeePassXC
   hosts: localhost
   become: true
 

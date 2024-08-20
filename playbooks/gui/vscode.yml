@@ -1,0 +1,46 @@
+---
+- name: VSCode | Install dependencies for VSCode
+  hosts: localhost
+  become: true
+
+  pre_tasks:
+    - name: Include pre-tasks to update apt
+      import_tasks: update_apt.yml
+
+  tasks:
+  - name: VSCode | Install neccessary apt packages
+    ansible.builtin.apt:
+      name:
+        - wget
+        - gpg
+      state: present
+      update_cache: yes
+
+    - name: VSCode | Download and add the Microsoft GPG key
+      ansible.builtin.get_url:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        dest: /tmp/packages.microsoft.gpg
+        mode: '0644'
+
+    - name: VSCode | Convert the Microsoft GPG key to APT's format
+      shell: gpg --dearmor < /tmp/packages.microsoft.gpg > /etc/apt/keyrings/packages.microsoft.gpg
+      args:
+        creates: /etc/apt/keyrings/packages.microsoft.gpg
+
+    - name: VSCode | Add the VSCode repository
+      ansible.builtin.lineinfile:
+        path: /etc/apt/sources.list.d/vscode.list
+        line: "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main"
+        create: yes
+
+    - name: VSCode | Remove the temporary GPG file
+      ansible.builtin.file:
+        path: /tmp/packages.microsoft.gpg
+        state: absent
+
+    - name: VSCode | Install VSCode
+      ansible.builtin.apt:
+        update_cache: yes
+        name: code
+        state: present
+
