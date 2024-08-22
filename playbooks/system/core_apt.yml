@@ -12,9 +12,11 @@
       become: true
       apt:
         name: 
+          - git
           - ripgrep
           - pavucontrol
           - xclip
+          - htop
           - jq
           - tldr
           - shutter

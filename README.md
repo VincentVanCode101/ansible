@@ -33,11 +33,11 @@ ansible-playbook playbooks/system/i3.yml # Log-out and in again to choose the i3
 # Languages
 ansible-playbook playbooks/languages/go_lang.yml
 
-# Terminal
-ansible-playbook playbooks/terminal/neovim.yml
-ansible-playbook playbooks/terminal/fzf.yml # On a new system for it to take affect, you have to call ~/.fzf/install
-ansible-playbook playbooks/terminal/tmux.yml
-ansible-playbook playbooks/terminal/install_zsh.yml # Make sure to log-out and in again for this to take affect
+# Terminal Applications
+ansible-playbook playbooks/terminal_applications/neovim.yml
+ansible-playbook playbooks/terminal_applications/fzf.yml # On a new system for it to take affect, you have to call ~/.fzf/install
+ansible-playbook playbooks/terminal_applications/tmux.yml
+ansible-playbook playbooks/terminal_applications/install_zsh.yml # Make sure to log-out and in again for this to take affect
 
 # GUIs
 ansible-playbook playbooks/gui/brave_browser.yml

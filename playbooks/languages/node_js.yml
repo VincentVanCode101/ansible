@@ -1,0 +1,62 @@
+---
+- name: Install Node.js via NVM
+  hosts: localhost
+  become: false
+  vars_files:
+    - ../vars.yml
+
+  tasks:
+    - name: Node | Install necessary packages
+      become: true
+      apt:
+        name:
+          - curl
+          - build-essential
+          - libssl-dev
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Node | Download and install NVM
+      shell: |
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+      args:
+        creates: "{{ home }}/.nvm/nvm.sh"
+        executable: /bin/bash
+      environment:
+        HOME: "{{ home }}"
+
+    - name: Node | Modify or Check .npmrc for prefix settings
+      lineinfile:
+        path: "{{ home }}/.npmrc"
+        regexp: '^(globalconfig|prefix)'
+        state: absent
+      ignore_errors: yes
+
+    - name: Node | Source NVM and install Node.js with prefix handling
+      shell: |
+        export NVM_DIR="{{ home }}/.nvm"
+        [ -s "{{ home }}/.nvm/nvm.sh" ] && \. "{{ home }}/.nvm/nvm.sh"
+        nvm use --delete-prefix v20.17.0 --silent
+        nvm install 20
+      args:
+        executable: /bin/bash
+      environment:
+        HOME: "{{ home }}"
+        NVM_DIR: "{{ home }}/.nvm"
+
+    - name: Node | Ensure Node is installed and at correct version
+      shell: |
+        export NVM_DIR="{{ home }}/.nvm"
+        [ -s "{{ home }}/.nvm/nvm.sh" ] && \. "{{ home }}/.nvm/nvm.sh"
+        node -v
+      args:
+        executable: /bin/bash
+      environment:
+        HOME: "{{ home }}"
+        NVM_DIR: "{{ home }}/.nvm"
+      register: node_version_output
+      changed_when: false
+
+    - name: Node | Output installed Node version
+      debug:
+        msg: "Node version installed - {{ node_version_output.stdout }}"
