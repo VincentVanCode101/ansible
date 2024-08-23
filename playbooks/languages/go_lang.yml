@@ -98,6 +98,24 @@
 
       when: go_latest_version not in current_go_version.stdout|default('')
 
+    - name: Go-Lang | Ensure Go paths is in .zshrc
+      ansible.builtin.lineinfile:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+        line: |
+          export PATH="$PATH:/usr/local/go/bin"
+        create: yes
+        state: present
+        insertafter: EOF
+
+    - name: Go-Lang | Ensure Go paths is in .bashrc
+      ansible.builtin.lineinfile:
+        path: "{{ ansible_env.HOME }}/.bashrc"
+        line: |
+          export PATH="$PATH:/usr/local/go/bin"
+        create: yes
+        state: present
+        insertafter: EOF
+
   handlers:
     - name: Cleanup go downloaded tar
       ansible.builtin.file:
