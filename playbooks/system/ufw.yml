@@ -20,7 +20,7 @@
 
     - name: Ufw-Firewall |Ensure UFW is enabled
       ansible.builtin.shell: |
-        sudo ufw status | grep -qw 'Status: active'
+        sudo ufw status | grep -E -q 'Status: (active|aktive)'
       register: ufw_status_check
       changed_when: false
       failed_when: ufw_status_check.rc != 0

@@ -13,6 +13,7 @@
       apt:
         name: 
           - git
+          - tmux
           - ripgrep
           - pavucontrol
           - xclip
