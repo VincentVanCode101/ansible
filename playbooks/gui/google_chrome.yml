@@ -1,0 +1,55 @@
+---
+- name: Google Chrome | Install Google Chrome Browser
+  hosts: localhost
+  become: true
+
+  pre_tasks:
+    - name: Update APT cache
+      include_role:
+        name: update_apt
+
+  tasks:
+  - name: Include main vars
+    ansible.builtin.include_vars:
+      file: ../vars.yml
+
+  - name: Google Chrome | Backup Google Chrome config directory
+    ansible.builtin.command:
+      cmd: mv ~/.config/google-chrome/ ~/.config/google-chrome.bak/
+    args:
+      removes: ~/.config/google-chrome/
+
+# Pondering: Do iwant wget installed, even tho I use 
+# ansible.builtin.get_url module to get the chrome deb package?
+  - name: Google Chrome | Install wget to get .deb file
+    ansible.builtin.apt:
+      name: wget
+
+  - name: Google Chrome | Remove old version Google Chrome
+    ansible.builtin.apt:
+      name: google-chrome-stable
+      state: absent
+
+# Pondering: Should I use the get_url package or built shell to
+# wget the url
+  - name: Google Chrome | Download Google Chrome deb package
+    ansible.builtin.get_url:
+      url: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+      dest: /tmp/google-chrome.deb
+      mode: '0755'
+
+  - name: Google Chrome | Install the Chrome deb package
+    ansible.builtin.apt:
+      deb: /tmp/google-chrome.deb
+
+  - name: Google Chrome | Restore Google Chrome config directory
+    ansible.builtin.command:
+      cmd: mv ~/.config/google-chrome.bak/ ~/.config/google-chrome/
+    args:
+      removes: ~/.config/google-chrome.bak/
+
+  - name: Google Chrome | Remove google-chrome.deb file in /tmp dir
+    ansible.builtin.file:
+       path: "/tmp/google-chrome.deb"
+       state: absent
+
