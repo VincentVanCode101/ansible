@@ -6,7 +6,7 @@ ssh_keys:
   - id_rsa
   - id_ed25519
 ssh_key_dir: "{{ lookup('env', 'HOME') }}/.ssh"
-source_key_dir: "./.ssh"
+source_key_dir: "../resources/.ssh"
 
 oh_my_zsh_path: "/home/{{ current_user }}/.oh-my-zsh"
 zshrc_path: "/home/{{ current_user }}/.zshrc"
