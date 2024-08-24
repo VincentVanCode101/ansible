@@ -1,0 +1,40 @@
+---
+- name : SSH-Keys | Setup my ssh keys
+  hosts: localhost
+
+  vars_files:
+    - ../vars.yml
+
+  tasks:
+    - name: SSH-Keys | Ensure .ssh directory exists
+      file:
+        dest: "{{ ssh_key_dir }}"
+        mode: 0700
+        state: directory
+
+    - name: SSH-Keys | Install SSH keys
+      loop: "{{ ssh_keys }}"
+      copy:
+        src: "{{ source_key_dir }}/{{ item }}"
+        dest: "{{ ssh_key_dir }}/{{ item }}"
+        mode: 0600
+
+    - name: SSH-Keys | Install SSH public keys
+      loop: "{{ ssh_keys }}"
+      copy:
+        src: "{{ source_key_dir }}/{{ item }}.pub"
+        dest: "{{ ssh_key_dir }}/{{ item }}.pub"
+        mode: 0644
+
+    - name: SSH-Keys | Set authorized keys from file
+      loop: "{{ ssh_keys }}"
+      authorized_key:
+        user: "{{ pc_host_user }}"
+        state: present
+        key: "{{ lookup('file', ssh_key_dir ~ '/' ~ item ~ '.pub') }}"
+
+    - name: SSH-Keys | Copy SSH config file to host
+      copy:
+        src: "{{ source_key_dir }}/config"
+        dest: "{{ ssh_key_dir }}/config"
+        mode: 0644

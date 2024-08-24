@@ -1,0 +1,30 @@
+---
+- name: Dotfiles | Set up my dotfiles
+  hosts: localhost
+
+  tasks:
+    - name: Dotfiles |Installing stow
+      become: true
+      apt: 
+        name: stow
+
+    - name: Dotfiles | Cloning dotfiles
+      become: false
+      become_user: "{{ pc_host_user }}"
+      ansible.builtin.git:
+        repo: 'git@gitlab.com:christoph.tech101/dotfiles.git'
+        dest: "{{ lookup('env', 'HOME') }}/dotfiles"
+        recursive: yes
+        update: yes
+        accept_hostkey: yes
+        version: main
+
+    - name: Dotfiles | Clean environment by removing existing dotfiles
+      shell: cd $HOME/dotfiles && ./clean-env
+      args:
+        executable: /bin/zsh
+
+    - name: Dotfiles | Stow dotfiles
+      shell: cd $HOME/dotfiles && ./ubuntu
+      args:
+        executable: /bin/zsh

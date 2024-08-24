@@ -18,6 +18,16 @@
         update_cache: yes
       become: true
 
+    - name: ZSH | Download Oh My Zsh installation script
+      get_url:
+        url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        dest: /tmp/install_ohmyzsh.sh
+
+    - name: ZSH | Run Oh My Zsh installation script
+      command: sh /tmp/install_ohmyzsh.sh --unattended
+      register: ohmyzsh_result
+      failed_when: "'FAILED' in ohmyzsh_result.stderr"
+
   # This is another one of the items I cannot seem to figure out.  I am using root but I am not getting this to change forever...
   # Nvm, guess I solved it... you have to log out and in again
     - name: ZSH | Ensure zsh is the default shell
@@ -30,22 +40,6 @@
       become: true
       ansible.builtin.command: chsh -s /usr/bin/zsh
   # -----------------------------------------------------------------------------
-
-    - name: ZSH | Download Oh My Zsh installation script
-      get_url:
-        url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-        dest: /tmp/install_ohmyzsh.sh
-
-    - name: ZSH | Run Oh My Zsh installation script
-      command: sh /tmp/install_ohmyzsh.sh --unattended
-      register: ohmyzsh_result
-      failed_when: "'FAILED' in ohmyzsh_result.stderr"
-    
-    - name: ZSH | Ensure zsh is the default shell
-      user:
-        name: "{{ current_user }}"
-        shell: "/usr/bin/zsh"
-      become: true
 
     - name: ZSH | Clone zsh-autosuggestions
       ansible.builtin.git:
