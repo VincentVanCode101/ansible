@@ -29,7 +29,7 @@
     - name: SSH-Keys | Set authorized keys from file
       loop: "{{ ssh_keys }}"
       authorized_key:
-        user: "{{ pc_host_user }}"
+        user: "{{ current_user }}"
         state: present
         key: "{{ lookup('file', ssh_key_dir ~ '/' ~ item ~ '.pub') }}"
 
