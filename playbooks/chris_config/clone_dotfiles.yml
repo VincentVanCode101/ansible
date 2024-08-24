@@ -1,6 +1,13 @@
 ---
 - name: Dotfiles | Set up my dotfiles
   hosts: localhost
+  vars_files:
+    - ../vars.yml
+
+  pre_tasks:
+    - name: Update APT cache
+      include_role:
+        name: update_apt
 
   tasks:
     - name: Dotfiles |Installing stow
