@@ -8,7 +8,7 @@ ssh_key_dir="$script_dir/../../resources/.ssh"
 ssh_keys=$(find "$ssh_key_dir" -type f -name 'id_*' ! -name '*.pub' -exec basename {} \;)
 
 # Start the ssh-agent and add each SSH key
-eval "$(ssh-agent -s)" > "/tmp/.ssh-agent-setup"
+echo "$(ssh-agent -s)" > "/tmp/.ssh-agent-setup"
 
 for key in $ssh_keys; do
     ssh_add_path="$HOME/.ssh/$key"
