@@ -15,22 +15,20 @@
       apt: 
         name: stow
 
-    - name: Dotfiles | Start ssh-agent
-      ansible.builtin.shell: eval $(ssh-agent)
+    - name: SSH-Keys | Start ssh-agent and capture SSH_AUTH_SOCK
+      shell: |
+        eval $(ssh-agent)
+        echo $SSH_AUTH_SOCK
       register: ssh_agent_output
 
-    - name: Debug SSH_AUTH_SOCK environment variable
-      debug:
-        msg: "SSH_AUTH_SOCK is set to {{ ssh_agent_output.stdout }}"
-
-    - name: Dotfiles | Add SSH keys with passphrases to ssh-agent
+    - name: SSH-Keys | Add SSH keys with passphrases to ssh-agent
       ansible.builtin.expect:
         command: ssh-add "{{ ssh_key_dir }}/{{ item }}"
         responses:
-          "Enter passphrase for {{ ssh_key_dir }}/{{ item }}:": "{{ lookup('password_prompt', 'SSH Key Passphrase for ' ~ item) }}"
+          "Enter passphrase for {{ ssh_key_dir }}/{{ item }}:": ""
       with_items: "{{ ssh_keys }}"
       # environment:
-      #   SSH_AUTH_SOCK: "{{ ssh_agent_output.stdout_lines[-1].split('=')[1].split(';')[0] }}"
+        # SSH_AUTH_SOCK: "{{ ssh_agent_output.stdout }}"
 
     - name: Dotfiles | Cloning dotfiles
       become: false
@@ -43,7 +41,7 @@
         accept_hostkey: yes
         version: main
       # environment:
-        # SSH_AUTH_SOCK: "{{ ssh_agent_output.stdout_lines[-1].split('=')[1].split(';')[0] }}"
+        # SSH_AUTH_SOCK: "{{ ssh_agent_output.stdout }}"
 
     - name: Dotfiles | Clean environment by removing existing dotfiles
       shell: cd $HOME/dotfiles && ./clean-env
