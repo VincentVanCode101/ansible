@@ -15,6 +15,12 @@
       apt: 
         name: stow
 
+    - name: Dotfiles | Load SSH keys
+      shell: |
+        source ./start_ssh_agent_and_add_ssh_keys.sh
+      args:
+        executable: /bin/bash
+
     - name: Dotfiles | Cloning dotfiles
       become: false
       become_user: "{{ current_user }}"
@@ -25,12 +31,6 @@
         update: yes
         accept_hostkey: yes
         version: main
-
-    - name: Dotfiles | Load SSH keys
-      shell: |
-        source ./start_ssh_agent_and_add_ssh_keys.sh
-      args:
-        executable: /bin/bash
 
     - name: Dotfiles | Clean environment by removing existing unstowing & removing dotfiles
       shell: cd $HOME/dotfiles && ./ubuntu --clean-env
