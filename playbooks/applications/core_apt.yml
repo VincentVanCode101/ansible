@@ -13,6 +13,7 @@
       apt:
         name: 
           - git
+          - fonts-powerline
           - tmux
           - ripgrep
           - pavucontrol
