@@ -27,8 +27,8 @@
         responses:
           "Enter passphrase for {{ ssh_key_dir }}/{{ item }}:": ""
       with_items: "{{ ssh_keys }}"
-      # environment:
-        # SSH_AUTH_SOCK: "{{ ssh_agent_output.stdout }}"
+      environment:
+        SSH_AUTH_SOCK: "{{ ssh_agent_output.stdout }}"
 
     - name: Dotfiles | Cloning dotfiles
       become: false
@@ -40,8 +40,8 @@
         update: yes
         accept_hostkey: yes
         version: main
-      # environment:
-        # SSH_AUTH_SOCK: "{{ ssh_agent_output.stdout }}"
+      environment:
+        SSH_AUTH_SOCK: "{{ ssh_agent_output.stdout }}"
 
     - name: Dotfiles | Clean environment by removing existing dotfiles
       shell: cd $HOME/dotfiles && ./clean-env
