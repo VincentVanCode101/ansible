@@ -49,3 +49,12 @@ ansible-playbook playbooks/gui/ocular.yml
 
 # Ponderings
 - should I instal node? npm? java? cpp-comiler? clang?
+
+
+```bash
+eval $(ssh-agent)
+for key in $(find ./resources/.ssh -name "id_*" ! -name "*.pub" -type f -exec basename {} \;); do
+    export SSH_KEY="$key"
+    ssh-add "$HOME/.ssh/$key"
+done
+```
