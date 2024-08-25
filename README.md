@@ -39,11 +39,10 @@ ansible-playbook playbooks/applications/neovim.yml
 ansible-playbook playbooks/applications/obsidian.yml
 
 ```
-### 5. GUI Applications
+### 5. GUI Applications (Yeah, some GUIs are installed in core_apt & core_snap)
 ```bash
 ansible-playbook playbooks/gui/brave_browser.yml
 ansible-playbook playbooks/gui/spotify.yml
-ansible-playbook playbooks/gui/gimp.yml
 ansible-playbook playbooks/gui/keepassxc.yml
 ansible-playbook playbooks/gui/okular.yml
 ansible-playbook playbooks/gui/vscode.yml
