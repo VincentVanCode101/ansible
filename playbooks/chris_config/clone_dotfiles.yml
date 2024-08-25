@@ -5,7 +5,7 @@
     - ../vars.yml
 
   pre_tasks:
-    - name: Update APT cache
+    - name: Dotfiles | Update APT cache
       include_role:
         name: update_apt
 
@@ -26,7 +26,13 @@
         accept_hostkey: yes
         version: main
 
-    - name: Dotfiles | Clean environment by removing existing dotfiles
+    - name: Dotfiles | Load SSH keys
+      shell: |
+        source ./start_ssh_agent_and_add_ssh_keys.sh
+      args:
+        executable: /bin/bash
+
+    - name: Dotfiles | Clean environment by removing existing unstowing & removing dotfiles
       shell: cd $HOME/dotfiles && ./ubuntu --clean-env
       args:
         executable: /bin/zsh
