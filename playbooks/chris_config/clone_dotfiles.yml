@@ -27,11 +27,11 @@
         version: main
 
     - name: Dotfiles | Clean environment by removing existing dotfiles
-      shell: cd $HOME/dotfiles && ./clean-env
+      shell: cd $HOME/dotfiles && ./ubuntu --clean-env
       args:
         executable: /bin/zsh
 
     - name: Dotfiles | Stow dotfiles
-      shell: cd $HOME/dotfiles && ./ubuntu
+      shell: cd $HOME/dotfiles && ./ubuntu --install
       args:
         executable: /bin/zsh
