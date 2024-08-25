@@ -15,9 +15,8 @@
       apt: 
         name: stow
 
-    - name: Dotfiles | Load SSH keys
-      shell: |
-        source ./start_ssh_agent_and_add_ssh_keys.sh
+    - name: Dotfiles | Source SSH agent environment
+      shell: source $HOME/.ssh/agent_env
       args:
         executable: /bin/bash
 
