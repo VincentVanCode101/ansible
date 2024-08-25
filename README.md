@@ -57,7 +57,7 @@ ansible-playbook playbooks/languages/node_js.yml
 
 ### 7. Chris' Configuration
 ```bash
-ansible-playbook playbooks/chris_config/setup_ssh_keys.yml
+ansible-playbook playbooks/chris_config/setup_ssh_keys.yml --ask-vault-pass
 
 eval $(ssh-agent)
 for key in $(find ./resources/.ssh -name "id_*" ! -name "*.pub" -type f -exec basename {} \;); do
