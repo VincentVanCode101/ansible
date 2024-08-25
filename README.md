@@ -38,7 +38,6 @@ ansible-playbook playbooks/applications/install_zsh.yml # Make sure to log-out a
 ansible-playbook playbooks/applications/neovim.yml
 ansible-playbook playbooks/applications/obsidian.yml
 
-ansible-playbook playbooks/system/de-chris.yml # Use with setxkbmap de-chris (I guess you have to log-out and in again for this to take affec)
 ```
 ### 5. GUI Applications
 ```bash
@@ -47,6 +46,8 @@ ansible-playbook playbooks/gui/spotify.yml
 ansible-playbook playbooks/gui/gimp.yml
 ansible-playbook playbooks/gui/keepassxc.yml
 ansible-playbook playbooks/gui/okular.yml
+ansible-playbook playbooks/gui/vscode.yml
+ansible-playbook playbooks/gui/google_chrome.yml
 ```
 
 ### 6. Language Environments
@@ -66,6 +67,7 @@ for key in $(find ./resources/.ssh -name "id_*" ! -name "*.pub" -type f -exec ba
 done
 
 ansible-playbook playbooks/chris_config/clone_dotfiles.yml
+ansible-playbook playbooks/system/de-chris.yml # Use with 'setxkbmap de-chris' (I guess you have to log-out and in again for this to take affect to activate the keyboard setting)
 ```
 
 # Ponderings
