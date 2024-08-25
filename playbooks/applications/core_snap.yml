@@ -1,0 +1,21 @@
+---
+- name: Snap-Packages | Install applications via Snap
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Snap-Packages | Ensure snapd is installed
+      ansible.builtin.package:
+        name: snapd
+        state: present
+
+    - name: Snap-Packages | Install Shotcut from the Snap Store
+      community.general.snap:
+        name: shotcut
+        classic: yes
+        state: present
+
+    - name: Snap-Packages | Install Discord from the Snap Store
+      community.general.snap:
+        name: discord
+        state: present
