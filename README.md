@@ -66,8 +66,8 @@ for key in $(find ./resources/.ssh -name "id_*" ! -name "*.pub" -type f -exec ba
 done
 
 ansible-playbook playbooks/chris_config/clone_dotfiles.yml
-ansible-playbook playbooks/system/de-chris.yml # Use with 'setxkbmap de-chris' (I guess you have to log-out and in again for this to take affect to activate the keyboard setting)
+ansible-playbook playbooks/chris_config/de_chris.yml # Use with 'setxkbmap de-chris' (I guess you have to log-out and in again for this to take affect to activate the keyboard setting)
 ```
 
 # Ponderings
-- should I instal node? npm? java? cpp-comiler? clang?
+- should I instal node? npm? nvm? java? cpp-comiler? clang?
