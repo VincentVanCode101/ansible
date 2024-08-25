@@ -15,21 +15,6 @@
       apt: 
         name: stow
 
-    - name: Dotfiles | Source SSH agent environment
-      shell: |
-        source /tmp/agent_env
-        ssh-add -l  # List loaded keys to verify
-      args:
-        executable: /bin/bash
-      register: ssh_agent_check
-      ignore_errors: yes
-
-    - name: Dotfiles | Check if SSH agent is running
-      fail:
-        msg: "SSH agent is not running, or SSH keys are not loaded correctly."
-      when: ssh_agent_check.rc != 0
-
-
     - name: Dotfiles | Cloning dotfiles
       become: false
       become_user: "{{ current_user }}"
