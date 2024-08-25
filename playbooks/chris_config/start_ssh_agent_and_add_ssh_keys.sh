@@ -2,11 +2,13 @@
 
 script_dir="$(dirname "$0")"
 
+eval "$(ssh-agent -s)" > /tmp/agent_env
+
+echo "export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}" >> /tmp/agent_env
+echo "export SSH_AGENT_PID=${SSH_AGENT_PID}" >> /tmp/agent_env
+
 ssh_key_dir="$script_dir/../../resources/.ssh"
 ssh_keys=$(find "$ssh_key_dir" -type f -name 'id_*' ! -name '*.pub' -exec basename {} \;)
-
-eval "$(ssh-agent -s)" > "$HOME/.ssh/agent_env"
-trap 'kill $SSH_AGENT_PID' EXIT  # Ensure the agent is killed when the script exits
 
 for key in $ssh_keys; do
     ssh_add_path="$HOME/.ssh/$key"
