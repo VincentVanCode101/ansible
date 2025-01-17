@@ -3,19 +3,20 @@
   hosts: localhost
 
   pre_tasks:
-    - name: Update APT cache
-      include_role:
-        name: update_apt
 
-    - name: Check if running on Linux Mint
+    - name: Apt-Packages | Check if running on Linux Mint
       ansible.builtin.shell: cat /etc/os-release | grep 'Linux Mint'
       register: is_linux_mint
       changed_when: false
       failed_when: false
 
-    - name: Backup nosnap.pref if on Linux Mint
+    - name: Apt-Packages | Backup nosnap.pref if on Linux Mint
       ansible.builtin.command: mv /etc/apt/preferences.d/nosnap.pref /etc/apt/preferences.d/nosnap.pref.bak
       when: is_linux_mint.stdout != ""
+
+    - name: Apt-Packages | Update APT cache
+      include_role:
+        name: update_apt
 
   tasks:
     - name: Apt-Packages | All the apt-packages I like
