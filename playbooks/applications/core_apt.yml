@@ -1,6 +1,7 @@
 ---
 - name: Apt-Packages | Install core apt-packages
   hosts: localhost
+  become: true
 
   pre_tasks:
 
@@ -11,7 +12,6 @@
       failed_when: false
 
     - name: Apt-Packages | Backup nosnap.pref if on Linux Mint
-      become: true
       ansible.builtin.command: mv /etc/apt/preferences.d/nosnap.pref /etc/apt/preferences.d/nosnap.pref.bak
       when: is_linux_mint.stdout != ""
 
@@ -22,28 +22,34 @@
   tasks:
     - name: Apt-Packages | All the apt-packages I like
       become: true
-      apt:
-        name: 
-          - snapd
-          - git
-          - fonts-powerline
-          - tmux
-          - ripgrep
-          - pavucontrol
-          - mpv
-          - xclip
-          - gimp
-          - htop
-          - eza
-          - jq
-          - tldr
-          - shutter
-          - blueman
-          - unzip
-          - tar
-          - make # Should always be present on linux but you never know
-        state: present
-        update_cache: yes
+      block:
+        - name: Install apt packages
+          apt:
+            name: 
+              - snapd
+              - git
+              - fonts-powerline
+              - tmux
+              - ripgrep
+              - pavucontrol
+              - mpv
+              - xclip
+              - gimp
+              - htop
+              - exa
+              - jq
+              - tldr
+              - shutter
+              - blueman
+              - unzip
+              - tar
+              - make # Should always be present on linux but you never know
+            state: present
+            update_cache: yes
+      rescue:
+        - name: Restore nosnap.pref on failure
+          ansible.builtin.command: mv /etc/apt/preferences.d/nosnap.pref.bak /etc/apt/preferences.d/nosnap.pref
+          when: is_linux_mint.stdout != ""
 
   post_tasks:
     - name: Restore nosnap.pref if on Linux Mint
