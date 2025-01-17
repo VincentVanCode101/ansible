@@ -11,6 +11,7 @@
       failed_when: false
 
     - name: Apt-Packages | Backup nosnap.pref if on Linux Mint
+      become: true
       ansible.builtin.command: mv /etc/apt/preferences.d/nosnap.pref /etc/apt/preferences.d/nosnap.pref.bak
       when: is_linux_mint.stdout != ""
 
