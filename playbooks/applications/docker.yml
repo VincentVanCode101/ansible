@@ -7,7 +7,7 @@
     - ../vars.yml
 
   pre_tasks:
-    - name: Update APT cache
+    - name: Docker | Update APT cache
       include_role:
         name: update_apt
 
@@ -51,8 +51,8 @@
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu  $(. /etc/os-release && echo $VERSION_CODENAME) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
     - name: Docker | Update APT cache again
-      apt:
-        update_cache: yes
+      include_role:
+        name: update_apt
 
     - name: Docker | Install Docker packages
       apt:
@@ -69,3 +69,18 @@
         name: "{{ current_user }}"
         groups: docker
         append: true
+
+    - name: Docker | Read file containing Docker images
+      ansible.builtin.slurp:
+        src: ../../resources/docker-images.txt
+      register: file_content
+
+    - name: Docker | Parse Docker images from file
+      set_fact:
+        docker_images: "{{ file_content['content'] | b64decode | split('\n') }}"
+
+    - name: Pull Docker images
+      ansible.builtin.command:
+        cmd: docker pull {{ item }}
+      with_items: "{{ docker_images }}"
+      when: item != ''
