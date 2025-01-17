@@ -21,7 +21,6 @@
 
   tasks:
     - name: Apt-Packages | All the apt-packages I like
-      become: true
       block:
         - name: Install apt packages
           apt:
@@ -36,7 +35,7 @@
               - xclip
               - gimp
               - htop
-              - exa
+              - eza
               - jq
               - tldr
               - shutter
@@ -50,8 +49,11 @@
         - name: Restore nosnap.pref on failure
           ansible.builtin.command: mv /etc/apt/preferences.d/nosnap.pref.bak /etc/apt/preferences.d/nosnap.pref
           when: is_linux_mint.stdout != ""
+        - name: Set a flag indicating rescue was triggered
+          ansible.builtin.set_fact:
+            rescue_triggered: true
 
   post_tasks:
-    - name: Restore nosnap.pref if on Linux Mint
+    - name: Restore nosnap.pref if on Linux Mint and not already restored
       ansible.builtin.command: mv /etc/apt/preferences.d/nosnap.pref.bak /etc/apt/preferences.d/nosnap.pref
-      when: is_linux_mint.stdout != ""
+      when: is_linux_mint.stdout != "" and (rescue_triggered | default(false)) == false
