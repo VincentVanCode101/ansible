@@ -54,6 +54,15 @@
             rescue_triggered: true
 
   post_tasks:
-    - name: Restore nosnap.pref if on Linux Mint and not already restored
-      ansible.builtin.command: mv /etc/apt/preferences.d/nosnap.pref.bak /etc/apt/preferences.d/nosnap.pref
-      when: is_linux_mint.stdout != "" and (rescue_triggered | default(false)) == false
+    - name: Debug rescue_triggered value
+      ansible.builtin.debug:
+        msg: "Rescue triggered: {{ rescue_triggered | default(false) }}"
+
+    - name: Debug nosnap.pref.bak existence
+      ansible.builtin.shell: ls -l /etc/apt/preferences.d/nosnap.pref.bak
+      register: check_nosnap_pref_backup
+      ignore_errors: true
+
+    - name: Debug output of nosnap.pref.bak check
+      ansible.builtin.debug:
+        msg: "nosnap.pref.bak exists: {{ check_nosnap_pref_backup.stdout }}"
