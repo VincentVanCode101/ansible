@@ -12,6 +12,7 @@
       become: true
       apt:
         name: 
+          - snapd
           - git
           - fonts-powerline
           - tmux
