@@ -1,0 +1,58 @@
+---
+- name: second-brain | Setup second brain autosync service
+  hosts: localhost
+  become: true
+  vars_files:
+    - ../vars.yml
+
+  pre_tasks:
+    - name: second-brain | Update APT cache
+      include_role:
+        name: update_apt
+
+  vars:
+    # Directly clone via SSH using the alias configured in my SSH config.
+    repo_url_ssh: "git@github.com-second-brain:VincentVanCode101/second-brain.git"
+    repo_dest: "{{ personal }}/notes/second-brain"
+    service_src: "../../resources/autosync.service"
+    service_dest: "/etc/systemd/system/autosync.service"
+
+  tasks:
+    - name: second-brain | Ensure Git is installed
+      apt:
+        name: git
+        state: present
+
+    - name: second-brain | Install inotify-tools
+      apt:
+        name: inotify-tools
+        state: present
+
+    - name: second-brain | Clone the second-brain repository via SSH
+      git:
+        repo: "{{ repo_url_ssh }}"
+        dest: "{{ repo_dest }}"
+        version: "main"
+        force: yes
+        accept_hostkey: yes
+      become: false
+      environment:
+        HOME: "{{ lookup('env','HOME') }}"
+
+    - name: second-brain | Copy autosync.service file to systemd directory
+      copy:
+        src: "{{ service_src }}"
+        dest: "{{ service_dest }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: second-brain | Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: second-brain | Enable and start autosync service
+      systemd:
+        name: autosync.service
+        enabled: yes
+        state: started

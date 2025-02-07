@@ -5,6 +5,7 @@ personal: "{{ home }}/personal"
 ssh_keys:
   - id_rsa
   - id_ed25519
+  - id_second-brain_deploy
 ssh_key_dir: "{{ lookup('env', 'HOME') }}/.ssh"
 source_key_dir: "../../resources/.ssh"
 

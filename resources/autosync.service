@@ -1,0 +1,14 @@
+[Unit]
+Description=Automatic Git Sync Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/christoph/dotfiles/bin/.local/scripts/auto_sync_second_brain.sh
+Restart=on-failure
+User=christoph
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

@@ -1,40 +1,51 @@
 ---
-- name : SSH-Keys | Setup my ssh keys
+- name: SSH-Keys | Setup my ssh keys
   hosts: localhost
-
   vars_files:
     - ../vars.yml
 
   tasks:
     - name: SSH-Keys | Ensure .ssh directory exists
       file:
-        dest: "{{ ssh_key_dir }}"
-        mode: 0700
+        path: "{{ ssh_key_dir }}"
         state: directory
+        mode: '0700'
+
+    - name: SSH-Keys | Ensure .ssh/config.d directory exists
+      file:
+        path: "{{ ssh_key_dir }}/config.d"
+        state: directory
+        mode: '0700'
 
     - name: SSH-Keys | Install SSH keys
-      loop: "{{ ssh_keys }}"
       copy:
         src: "{{ source_key_dir }}/{{ item }}"
         dest: "{{ ssh_key_dir }}/{{ item }}"
-        mode: 0600
+        mode: '0600'
+      loop: "{{ ssh_keys }}"
 
     - name: SSH-Keys | Install SSH public keys
-      loop: "{{ ssh_keys }}"
       copy:
         src: "{{ source_key_dir }}/{{ item }}.pub"
         dest: "{{ ssh_key_dir }}/{{ item }}.pub"
-        mode: 0644
+        mode: '0644'
+      loop: "{{ ssh_keys }}"
 
     - name: SSH-Keys | Set authorized keys from file
-      loop: "{{ ssh_keys }}"
       authorized_key:
         user: "{{ current_user }}"
         state: present
         key: "{{ lookup('file', ssh_key_dir ~ '/' ~ item ~ '.pub') }}"
+      loop: "{{ ssh_keys }}"
 
-    - name: SSH-Keys | Copy SSH config file to host
+    - name: SSH-Keys | Copy main SSH config file to host
       copy:
         src: "{{ source_key_dir }}/config"
         dest: "{{ ssh_key_dir }}/config"
-        mode: 0644
+        mode: '0644'
+
+    - name: SSH-Keys | Copy personal SSH config file (personal.conf) to host config.d directory
+      copy:
+        src: "{{ source_key_dir }}/personal.conf"
+        dest: "{{ ssh_key_dir }}/config.d/personal.conf"
+        mode: '0644'
