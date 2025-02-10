@@ -67,6 +67,7 @@ done
 
 ansible-playbook playbooks/chris_config/clone_dotfiles.yml
 ansible-playbook playbooks/chris_config/de_chris.yml # Use with 'setxkbmap de-chris' (I guess you have to log-out and in again for this to take affect to activate the keyboard setting)
+ansible-playbook playbooks/chris_config/setup_secondbrain.yml
 ```
 
 # Ponderings
