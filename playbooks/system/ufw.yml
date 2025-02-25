@@ -1,24 +1,24 @@
 ---
-- name: Ufw-Firewall | Install and enable UFW firewall
+- name: UFW | Install and enable UFW firewall
   hosts: localhost
   become: true
 
   pre_tasks:
-    - name: Update APT cache
+    - name: UFW | Update APT cache
       include_role:
         name: update_apt
 
   tasks:
-    - name: Ufw-Firewall |Install UFW
+    - name: UFW | Install UFW
       ansible.builtin.apt:
         name: ufw
         state: present
 
-    - name: Ufw-Firewall |Enable UFW
+    - name: UFW | Enable UFW
       ansible.builtin.shell: |
         sudo ufw enable
 
-    - name: Ufw-Firewall |Ensure UFW is enabled
+    - name: UFW | Ensure UFW is enabled
       ansible.builtin.shell: |
         sudo ufw status | grep -E -q 'Status: (active|aktive)'
       register: ufw_status_check

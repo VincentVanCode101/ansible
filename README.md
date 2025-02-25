@@ -53,6 +53,7 @@ ansible-playbook playbooks/gui/google_chrome.yml
 ```bash
 ansible-playbook playbooks/languages/go_lang.yml
 ansible-playbook playbooks/languages/node_js.yml
+ansible-playbook playbooks/languages/php.yml
 ```
 
 ### 7. Chris' Configuration

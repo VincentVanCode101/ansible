@@ -1,0 +1,17 @@
+---
+- name: PHP | Install php
+  hosts: localhost
+  become: true
+  vars_files:
+    - ../vars.yml
+
+  pre_tasks:
+    - name: PHP | Update APT cache
+      include_role:
+        name: update_apt
+
+  tasks:
+    - name: PHP | Install php
+      ansible.builtin.apt:
+        name: php
+        state: present
