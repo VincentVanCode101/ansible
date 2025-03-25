@@ -1,0 +1,3 @@
+- install dbeaver-ci
+- install rpi-imager
+- install peek (to record gifs)
