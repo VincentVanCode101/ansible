@@ -1,3 +1,11 @@
-- install dbeaver-ci
-- install rpi-imager
-- install peek (to record gifs)
+- install:
+    - aws cli
+    - peek (to record gifs)
+    - rpi-imager
+    - shotcut
+    - vnc viewer
+    - shutter
+    - remmina
+    - iCloud stuff
+    - wireshark
+    - dbeaver-ci
