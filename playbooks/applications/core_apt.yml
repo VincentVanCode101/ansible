@@ -43,6 +43,8 @@
               - unzip
               - tar
               - make # Should always be present on linux but you never know
+              - kdeconnect
+              - default-jdk
             state: present
             update_cache: yes
       rescue:
