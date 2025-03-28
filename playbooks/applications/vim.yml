@@ -1,0 +1,20 @@
+---
+- name: vim | Install vim
+  hosts: localhost
+  become: true
+
+  pre_tasks:
+    - name: vim | Update APT cache
+      include_role:
+        name: update_apt
+
+  tasks:
+    - name: vim | install vim
+      apt:
+        name: 
+          - vim
+        state: present
+        update_cache: yes
+
+    - name: vim | Set vim.basic as default editor
+      command: update-alternatives --set editor /usr/bin/vim.basic

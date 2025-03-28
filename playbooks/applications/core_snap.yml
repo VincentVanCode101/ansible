@@ -14,8 +14,3 @@
         name: shotcut
         classic: yes
         state: present
-
-    - name: Snap-Packages | Install Discord from the Snap Store
-      community.general.snap:
-        name: discord
-        state: present

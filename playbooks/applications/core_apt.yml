@@ -44,7 +44,6 @@
               - tar
               - make # Should always be present on linux but you never know
               - kdeconnect
-              - vim
               - maim # screenshots in i3
               - xfce4-appfinder
             state: present

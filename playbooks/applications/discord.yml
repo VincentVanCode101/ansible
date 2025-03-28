@@ -1,0 +1,10 @@
+---
+- name: discord | Install discord
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: discord | Install Discord from the Snap Store
+      community.general.snap:
+        name: discord
+        state: present

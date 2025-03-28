@@ -28,6 +28,9 @@
         update_cache: yes
 
     - name: Obsidian | Install Obsidian via snap (classic confinement)
-      command: snap install obsidian --classic
+      community.general.snap:
+        name: obsidian
+        classic: yes
+        state: present
       args:
         creates: /snap/bin/obsidian  # Prevents re-running if already installed
