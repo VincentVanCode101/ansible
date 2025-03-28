@@ -1,10 +1,10 @@
 ---
-- name: Obsidian | Update and install Obsidian
+- name: Obsidian | Clean up old install and install via Snap
   hosts: localhost
   become: true
 
   tasks:
-    - name: Obsidian | Remove existing Obsidian installation
+    - name: Obsidian | Remove old Obsidian .deb package (if any)
       apt:
         name: obsidian
         state: absent
@@ -14,19 +14,20 @@
       register: whereis_obsidian
       changed_when: false
 
-    - name: Obsidian | Remove Obsidian binary if it exists
+    - name: Obsidian | Remove leftover Obsidian binaries
       file:
         path: "{{ item }}"
         state: absent
       with_items: "{{ whereis_obsidian.stdout.split()[1:] }}"
       when: whereis_obsidian.stdout != 'obsidian:'
 
-    - name: Obsidian | Download Obsidian deb package
-      get_url:
-        url: https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/obsidian_1.6.7_amd64.deb
-        dest: /tmp/obsidian_1.6.7_amd64.deb
-        mode: '0644'
-
-    - name: Obsidian | Install Obsidian deb package
+    - name: Obsidian | Ensure snapd is installed
       apt:
-        deb: /tmp/obsidian_1.6.7_amd64.deb
+        name: snapd
+        state: present
+        update_cache: yes
+
+    - name: Obsidian | Install Obsidian via snap (classic confinement)
+      command: snap install obsidian --classic
+      args:
+        creates: /snap/bin/obsidian  # Prevents re-running if already installed
