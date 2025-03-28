@@ -32,19 +32,21 @@
               - ripgrep
               - pavucontrol
               - mpv
-              - xclip
+              - xclip # clipboard library
               - gimp
               - htop
-              - eza
+              - eza # previously exa, see my tree script
               - jq
               - tldr
-              - shutter
-              - blueman
+              - shutter # advanced screenshots
+              - blueman # bluetooth
               - unzip
               - tar
               - make # Should always be present on linux but you never know
               - kdeconnect
-              - default-jdk
+              - vim
+              - maim # screenshots in i3
+              - xfce4-appfinder
             state: present
             update_cache: yes
       rescue:
