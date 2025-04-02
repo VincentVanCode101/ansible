@@ -2,9 +2,7 @@
     - aws cli
     - peek (to record gifs)
     - rpi-imager
-    - shotcut
     - vnc viewer
-    - shutter
     - remmina
     - iCloud stuff
     - wireshark
