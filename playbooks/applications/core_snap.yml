@@ -14,3 +14,8 @@
         name: shotcut
         classic: yes
         state: present
+
+    - name: Snap-Packages | Install Telegram from the Snap Store
+      community.general.snap:
+        name: telegram-desktop
+        state: present
