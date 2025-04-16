@@ -1,0 +1,20 @@
+---
+- name: Fonts | Install Eurostile Extended Black font system-wide
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Fonts | Ensure the custom fonts directory exists
+      file:
+        path: /usr/local/share/fonts/truetype/custom
+        state: directory
+        mode: '0755'
+
+    - name: Fonts | Copy EurostileExtendedBlack.ttf to the custom fonts directory
+      copy:
+        src: ../../resources/EurostileExtendedBlack.ttf
+        dest: /usr/local/share/fonts/truetype/custom/EurostileExtendedBlack.ttf
+        mode: '0644'
+
+    - name: Fonts | Update the font cache
+      command: fc-cache -f -v

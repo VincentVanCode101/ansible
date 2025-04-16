@@ -1,5 +1,5 @@
 ---
-- name: Install core apt-packages
+- name: Install I3
   hosts: localhost
 
   pre_tasks:
