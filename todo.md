@@ -6,4 +6,3 @@
     - remmina
     - iCloud stuff
     - wireshark
-    - dbeaver-ci
