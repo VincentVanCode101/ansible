@@ -2,8 +2,6 @@
 - name: dbeaver | Ensure latest DBeaver CE is installed
   hosts: localhost
   become: true
-  vars_files:
-    - ../vars.yml
 
   tasks:
     - name: dbeaver | Purge any old DBeaver packages
