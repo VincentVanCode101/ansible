@@ -1,0 +1,47 @@
+---
+- name: dbeaver | Ensure latest DBeaver CE is installed
+  hosts: localhost
+  become: true
+  vars_files:
+    - ../vars.yml
+
+  tasks:
+    - name: dbeaver | Purge any old DBeaver packages
+      apt:
+        name:
+          - dbeaver
+          - dbeaver-ce
+        state: absent
+        purge: yes
+
+    - name: dbeaver | Locate leftover DBeaver files
+      find:
+        paths:
+          - /usr/bin
+          - /usr/share
+        patterns: "dbeaver*"
+      register: leftover_dbeaver
+      changed_when: false
+
+    - name: dbeaver | Remove leftover DBeaver files
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ leftover_dbeaver.files }}"
+      when: leftover_dbeaver.matched > 0
+
+    - name: dbeaver | Download latest DBeaver CE .deb
+      get_url:
+        url: "https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb"
+        dest: "/tmp/dbeaver-ce_latest_amd64.deb"
+        mode: '0644'
+
+    - name: dbeaver | Install DBeaver CE from .deb
+      apt:
+        deb: "/tmp/dbeaver-ce_latest_amd64.deb"
+        state: present
+
+    - name: dbeaver | Remove downloaded .deb
+      file:
+        path: "/tmp/dbeaver-ce_latest_amd64.deb"
+        state: absent
