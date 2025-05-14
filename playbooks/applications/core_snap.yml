@@ -19,3 +19,8 @@
       community.general.snap:
         name: telegram-desktop
         state: present
+
+    - name: Snap-Packages | Install iCloud applications from the Snap Store
+      community.general.snap:
+        name: icloud-for-linux
+        state: present
