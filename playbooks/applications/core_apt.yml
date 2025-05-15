@@ -37,6 +37,7 @@
               - htop
               - eza # previously exa, see my tree script
               - jq
+              - xdotool # workspace manipulation
               - tldr
               - shutter # advanced screenshots
               - blueman # bluetooth
