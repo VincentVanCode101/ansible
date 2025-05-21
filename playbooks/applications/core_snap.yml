@@ -24,3 +24,8 @@
       community.general.snap:
         name: icloud-for-linux
         state: present
+
+    - name: Snap-Packages | Install rpi-imager from the Snap Store
+      community.general.snap:
+        name: rpi-imager
+        state: present
