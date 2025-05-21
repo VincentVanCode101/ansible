@@ -1,7 +1,6 @@
 - install:
     - aws cli
     - peek (to record gifs)
-    - vnc viewer
     - remmina
     - wireshark
 

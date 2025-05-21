@@ -1,0 +1,35 @@
+---
+- name: RealVNC | Download and Install VNC Viewer DEB Package
+  hosts: localhost
+  become: true
+
+  vars:
+    realvnc_version: "7.13.1"
+    realvnc_filename: "VNC-Viewer-{{ realvnc_version }}-Linux-x64.deb"
+    realvnc_url: "https://downloads.realvnc.com/download/file/viewer.files/{{ realvnc_filename }}"
+
+  pre_tasks:
+    - name: Update APT cache
+      include_role:
+        name: update_apt
+
+  tasks:
+    - name: Ensure wget is installed
+      ansible.builtin.apt:
+        name: wget
+        state: present
+
+    - name: Download RealVNC Viewer DEB
+      ansible.builtin.get_url:
+        url: "{{ realvnc_url }}"
+        dest: "/tmp/{{ realvnc_filename }}"
+        mode: '0644'
+
+    - name: Install RealVNC Viewer DEB package
+      ansible.builtin.apt:
+        deb: "/tmp/{{ realvnc_filename }}"
+
+    - name: Remove downloaded DEB file
+      ansible.builtin.file:
+        path: "/tmp/{{ realvnc_filename }}"
+        state: absent
