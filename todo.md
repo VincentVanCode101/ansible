@@ -13,3 +13,11 @@
 - after installing libre-office, to get hyphenation, make sure to install:
 
 https://extensions.libreoffice.org/en/extensions/show/german-de-de-frami-dictionaries?qwRavCi2v9qQYlf=2qLVz1qe
+
+and
+
+sudo apt update
+sudo apt install \
+  hunspell-de-de      \
+  hyphen-de-de        \
+  libreoffice-l10n-de
