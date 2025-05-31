@@ -27,20 +27,20 @@ if [[ "$OS_NAME" == "Darwin" ]]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    echo "Updating Homebrew…"
+    echo "Updating Homebrew..."
     brew update
-    echo "Installing git & ansible via brew…"
+    echo "Installing git & ansible via brew..."
     brew install git ansible
 
 elif [[ -f "/etc/debian_version" ]]; then
 
     # --- Debian/Ubuntu LINUX PATH ----------------------------------------
 
-    echo "Updating apt & installing curl & git & software-properties-common…"
+    echo "Updating apt & installing curl & git & software-properties-common..."
     sudo apt update
     sudo apt install -y curl git software-properties-common
 
-    echo "Adding Ansible PPA & installing ansible…"
+    echo "Adding Ansible PPA & installing ansible..."
     sudo add-apt-repository --yes --update ppa:ansible/ansible
     sudo apt update
     sudo apt install -y ansible
@@ -53,7 +53,7 @@ fi
 # --- CLONE THE REPO -----------------------------------------------------
 
 mkdir -p "$(dirname "$DEST")"
-echo "Cloning ansible into $DEST…"
+echo "Cloning ansible into $DEST..."
 git clone https://github.com/VincentVanCode101/ansible "$DEST"
 
 echo "Setup complete! Now 'cd $DEST' and run your playbooks as documented."
