@@ -1,0 +1,134 @@
+---
+- name: Docker | Install Docker (Cross-Platform)
+  hosts: localhost
+  become: true
+
+  vars_files:
+    - ../../vars.yml
+
+  pre_tasks:
+    - name: Determine OS family
+      ansible.builtin.set_fact:
+        is_linux: "{{ ansible_system == 'Linux' }}"
+        is_darwin: "{{ ansible_system == 'Darwin' }}"
+
+  tasks:
+    - block:
+        - name: Docker | Update APT cache (Linux)
+          include_role:
+            name: update_apt
+
+        - name: Docker | Uninstall old versions and conflicting packages (Linux)
+          ansible.builtin.shell: |
+            for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do
+              apt-get remove -y $pkg || true
+            done
+
+        - name: Docker | Install required packages (Linux)
+          ansible.builtin.apt:
+            name:
+              - ca-certificates
+              - curl
+              - gnupg
+            state: present
+            update_cache: true
+
+        - name: Docker | Create directory for keyring (Linux)
+          ansible.builtin.file:
+            path: /etc/apt/keyrings
+            state: directory
+            mode: '0755'
+
+        - name: Docker | Remove old Docker GPG key file (Linux)
+          ansible.builtin.file:
+            path: /etc/apt/keyrings/docker.gpg
+            state: absent
+
+        - name: Docker | Download Docker GPG key (Linux)
+          ansible.builtin.shell: |
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+        - name: Docker | Set permissions for Docker GPG key (Linux)
+          ansible.builtin.file:
+            path: /etc/apt/keyrings/docker.gpg
+            mode: '0644'
+
+        - name: Docker | Add Docker repository (Linux)
+          ansible.builtin.shell: |
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+            https://download.docker.com/linux/ubuntu  $(. /etc/os-release && echo $VERSION_CODENAME) stable" \
+            | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+        - name: Docker | Update APT cache again (Linux)
+          include_role:
+            name: update_apt
+
+        - name: Docker | Install Docker packages (Linux)
+          ansible.builtin.apt:
+            name:
+              - docker-ce
+              - docker-ce-cli
+              - containerd.io
+              - docker-buildx-plugin
+              - docker-compose-plugin
+            state: present
+            update_cache: true
+
+        - name: Docker | Add the user to the docker group (Linux)
+          ansible.builtin.user:
+            name: "{{ current_user }}"
+            groups: docker
+            append: true
+      when: is_linux
+
+    - block:
+        - name: Docker | Download Docker .dmg (macOS)
+          ansible.builtin.get_url:
+            url: https://orbstack.dev/download/stable/latest/arm64
+            dest: /tmp/docker.dmg
+            mode: '0644'
+          register: dmg_download
+
+        - name: Docker | Ensure Docker.app is not already installed (macOS)
+          ansible.builtin.stat:
+            path: /Applications/Docker.app
+          register: docker_app
+
+        - name: Docker | Mount the DMG (macOS)
+          ansible.builtin.command: >
+            hdiutil attach /tmp/docker.dmg -nobrowse -mountpoint /Volumes/DockerDMG
+          when: not docker_app.stat.exists
+          register: mount_result
+
+        - name: Docker | Copy Docker.app to /Applications (macOS)
+          ansible.builtin.command: >
+            cp -R /Volumes/DockerDMG/Docker.app /Applications/
+          when: not docker_app.stat.exists
+
+        - name: Docker | Unmount the DMG (macOS)
+          ansible.builtin.command: >
+            hdiutil detach /Volumes/DockerDMG -quiet
+          when: not docker_app.stat.exists
+
+        - name: Docker | Clean up downloaded DMG (macOS)
+          ansible.builtin.file:
+            path: /tmp/docker.dmg
+            state: absent
+      when: is_darwin
+
+    - name: Docker | Read file containing Docker images
+      ansible.builtin.slurp:
+        src: ../../../resources/docker-images.txt
+      register: file_content
+
+    - name: Docker | Parse Docker images from file
+      ansible.builtin.set_fact:
+        docker_images: "{{ file_content['content'] | b64decode | split('\n') }}"
+
+    - name: Docker | Pull Docker images (Linux/macOS)
+      ansible.builtin.command:
+        cmd: docker pull "{{ item }}"
+      loop: "{{ docker_images }}"
+      when:
+        - item != ''
+        - (is_linux or is_darwin)

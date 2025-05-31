@@ -35,4 +35,3 @@
         cask: yes
         state: latest
       when: ansible_system == 'Darwin'
-            when: ansible_system == 'Linux'

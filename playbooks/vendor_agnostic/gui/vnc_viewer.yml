@@ -1,8 +1,6 @@
 ---
 - name: RealVNC | Download & Install Viewer (Linux x86_64 or macOS)
   hosts: localhost
-  connection: local
-  gather_facts: true
   become: true
 
   vars:
@@ -35,11 +33,7 @@
           - realvnc_architecture_file is defined
         fail_msg: >
           This playbook only supports macOS or 64-bit Linux (x86_64). 
-          (Kernel={{ ansible_facts['kernel'] }}, Arch={{ ansible_facts['architecture'] }})
-
-    - name: Show every variable available to this play
-      debug:
-        var: vars
+          (System={{ ansible_system }}, Arch={{ ansible_architecture }})
 
     ########################################################
     # 2) Download the appropriate package into /tmp/realvnc_install
@@ -66,15 +60,15 @@
         state: present
         update_cache: yes
       when:
-        - ansible_facts['kernel'] == 'Linux'
-        - ansible_facts['architecture'] == 'x86_64'
+        - ansible_system == 'Linux'
+        - ansible_architecture == 'x86_64'
 
     - name: RealVNC (Linux) | Install the downloaded .deb
       apt:
         deb: "/tmp/realvnc_install/{{ realvnc_filename }}"
       when:
-        - ansible_facts['kernel'] == 'Linux'
-        - ansible_facts['architecture'] == 'x86_64'
+        - ansible_system == 'Linux'
+        - ansible_architecture == 'x86_64'
 
     ########################################################
     # 3b) Install on macOS by mounting the .dmg + copying .app
@@ -84,7 +78,7 @@
         hdiutil attach /tmp/realvnc_install/{{ realvnc_filename }} -nobrowse
       register: attach_result
       changed_when: "'/Volumes/' in attach_result.stdout"
-      when: ansible_facts['kernel'] == 'Darwin'
+      when: ansible_system == 'Darwin'
 
     - name: RealVNC (macOS) | Copy VNC Viewer.app into /Applications
       copy:
@@ -92,13 +86,13 @@
         src: "/Volumes/VNC\\ Viewer/VNC\\ Viewer.app"
         dest: /Applications/
         mode: '0755'
-      when: ansible_facts['kernel'] == 'Darwin'
+      when: ansible_system == 'Darwin'
 
     - name: RealVNC (macOS) | Detach the DMG
       command: >
         hdiutil detach "{{ item }}"
       loop: "{{ attach_result.stdout_lines | select('search','/Volumes/') | list }}"
-      when: ansible_facts['kernel'] == 'Darwin'
+      when: ansible_system == 'Darwin'
 
     ########################################################
     # 4) Cleanup the temporary download directory
