@@ -1,47 +1,115 @@
 ---
-- name: VSCode | Install dependencies for VSCode
+- name: VSCode | Cross‐Platform Installation (Linux & macOS)
   hosts: localhost
+  connection: local
+  gather_facts: true
   become: true
 
   pre_tasks:
-    - name: Update APT cache
+    - name: Update APT cache on Debian/Ubuntu
       include_role:
         name: update_apt
+      when: ansible_facts['os_family'] == 'Debian'
 
   tasks:
-    - name: VSCode | Install neccessary apt packages
-      ansible.builtin.apt:
+    #################################################
+    # Linux (Debian/Ubuntu) installation via APT   #
+    #################################################
+    - name: VSCode (Linux) | Install prerequisite packages
+      apt:
         name:
           - wget
           - gpg
         state: present
         update_cache: yes
+      when: ansible_facts['os_family'] == 'Debian'
 
-    - name: VSCode | Download and add the Microsoft GPG key
-      ansible.builtin.get_url:
+    - name: VSCode (Linux) | Download Microsoft GPG key
+      get_url:
         url: https://packages.microsoft.com/keys/microsoft.asc
         dest: /tmp/packages.microsoft.gpg
         mode: '0644'
+      when: ansible_facts['os_family'] == 'Debian'
 
-    - name: VSCode | Convert the Microsoft GPG key to APT's format
-      shell: gpg --dearmor < /tmp/packages.microsoft.gpg > /etc/apt/keyrings/packages.microsoft.gpg
+    - name: VSCode (Linux) | Convert GPG key to APT's keyring format
+      shell: |
+        gpg --dearmor < /tmp/packages.microsoft.gpg > /etc/apt/keyrings/packages.microsoft.gpg
       args:
         creates: /etc/apt/keyrings/packages.microsoft.gpg
+      when: ansible_facts['os_family'] == 'Debian'
 
-    - name: VSCode | Add the VSCode repository
-      ansible.builtin.lineinfile:
+    - name: VSCode (Linux) | Add Microsoft VSCode repository
+      lineinfile:
         path: /etc/apt/sources.list.d/vscode.list
-        line: "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main"
+        line: >-
+          deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg]
+          https://packages.microsoft.com/repos/code stable main
         create: yes
+      when: ansible_facts['os_family'] == 'Debian'
 
-    - name: VSCode | Remove the temporary GPG file
-      ansible.builtin.file:
+    - name: VSCode (Linux) | Remove temporary GPG file
+      file:
         path: /tmp/packages.microsoft.gpg
         state: absent
+      when: ansible_facts['os_family'] == 'Debian'
 
-    - name: VSCode | Install VSCode
-      ansible.builtin.apt:
-        update_cache: yes
+    - name: VSCode (Linux) | Install VSCode package
+      apt:
         name: code
         state: present
+        update_cache: yes
+      when: ansible_facts['os_family'] == 'Debian'
 
+    #############################################
+    # macOS (Darwin) installation via unzip   #
+    #############################################
+    - name: VSCode (macOS) | Determine download URL (ARM vs Intel)
+      set_fact:
+        vscode_download_url: >-
+          {{ "https://code.visualstudio.com/docs/?dv=darwinarm64" }}
+      when:
+        - ansible_facts['os_family'] == 'Darwin'
+        - ansible_facts['architecture'] == 'aarch64'
+
+    - name: VSCode (macOS) | Determine download URL (Intel)
+      set_fact:
+        vscode_download_url: >-
+          {{ "https://code.visualstudio.com/docs/?dv=darwin" }}
+      when:
+        - ansible_facts['os_family'] == 'Darwin'
+        - ansible_facts['architecture'] != 'aarch64'
+
+    - name: VSCode (macOS) | Create temporary directory for download
+      file:
+        path: /tmp/vscode_install
+        state: directory
+        mode: '0755'
+      when: ansible_facts['os_family'] == 'Darwin'
+
+    - name: VSCode (macOS) | Download VSCode ZIP bundle
+      get_url:
+        url: "{{ vscode_download_url }}"
+        dest: /tmp/vscode_install/vscode.zip
+        mode: '0644'
+      when: ansible_facts['os_family'] == 'Darwin'
+
+    - name: VSCode (macOS) | Unarchive VSCode into /Applications
+      unarchive:
+        src: /tmp/vscode_install/vscode.zip
+        dest: /Applications
+        remote_src: yes
+      when: ansible_facts['os_family'] == 'Darwin'
+
+    - name: VSCode (macOS) | Ensure proper ownership in /Applications
+      file:
+        path: /Applications/Visual\ Studio\ Code.app
+        owner: "{{ lookup('env','USER') }}"
+        group: staff
+        recurse: yes
+      when: ansible_facts['os_family'] == 'Darwin'
+
+    - name: VSCode (macOS) | Remove temporary download directory
+      file:
+        path: /tmp/vscode_install
+        state: absent
+      when: ansible_facts['os_family'] == 'Darwin'

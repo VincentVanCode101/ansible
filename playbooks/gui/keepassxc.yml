@@ -1,20 +1,38 @@
 ---
-- name: KeePassXC | Install KeePassXC
+- name: KeePassXC | Install KeePassXC cross-platform
   hosts: localhost
-  become: true
-
-  pre_tasks:
-    - name: Update APT cache
-      include_role:
-        name: update_apt
+  become: false
 
   tasks:
-  - name: KeePassXC | Add KeePassXC PPA
-    ansible.builtin.apt_repository:
-      repo: ppa:phoerious/keepassxc
-      state: present
+    - name: Fail if unsupported OS
+      ansible.builtin.fail:
+        msg: "KeePassXC installation is only supported on Linux or macOS."
+      when: ansible_system not in ['Linux', 'Darwin']
 
-  - name: KeePassXC | Install KeePassXC
-    apt:
-      name: ["keepassxc"]
-      state: present
+    - name: KeePassXC - Linux | Update APT cache
+      include_role:
+        name: update_apt
+      when: ansible_system == 'Linux'
+
+    - name: KeePassXC - Linux | Add KeePassXC PPA
+      ansible.builtin.apt_repository:
+        repo: ppa:phoerious/keepassxc
+        state: present
+      when: ansible_system == 'Linux'
+      become: true
+
+    - name: KeePassXC - Linux | Install KeePassXC
+      ansible.builtin.apt:
+        name: keepassxc
+        state: present
+        update_cache: yes
+      when: ansible_system == 'Linux'
+      become: true
+
+    - name: KeePassXC - macOS | Install or upgrade KeePassXC via Homebrew
+      community.general.homebrew:
+        name: keepassxc
+        cask: yes
+        state: latest
+      when: ansible_system == 'Darwin'
+            when: ansible_system == 'Linux'

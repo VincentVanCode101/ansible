@@ -1,35 +1,109 @@
 ---
-- name: RealVNC | Download and Install VNC Viewer DEB Package
+- name: RealVNC | Download & Install Viewer (Linux x86_64 or macOS)
   hosts: localhost
+  connection: local
+  gather_facts: true
   become: true
 
   vars:
     realvnc_version: "7.13.1"
-    realvnc_filename: "VNC-Viewer-{{ realvnc_version }}-Linux-x64.deb"
-    realvnc_url: "https://downloads.realvnc.com/download/file/viewer.files/{{ realvnc_filename }}"
-
-  pre_tasks:
-    - name: Update APT cache
-      include_role:
-        name: update_apt
+    # We will set `realvnc_architecture_file` below and then build the full URL:
+    #   https://downloads.realvnc.com/download/file/viewer.files/VNC-Viewer-7.13.1-Linux-x64.deb
+    #   https://downloads.realvnc.com/download/file/viewer.files/VNC-Viewer-7.13.1-MacOSX-universal.dmg
+    realvnc_filename: "VNC-Viewer-{{ realvnc_version }}-{{ realvnc_architecture_file }}"
+    realvnc_download_url: "https://downloads.realvnc.com/download/file/viewer.files/{{ realvnc_filename }}"
 
   tasks:
-    - name: Ensure wget is installed
-      ansible.builtin.apt:
-        name: wget
-        state: present
+    ########################################################
+    # 1) Detect & set the correct filename for Linux vs. macOS
+    ########################################################
+    - name: RealVNC | Set filename for macOS (universal ARM/Intel)
+      set_fact:
+        realvnc_architecture_file: "MacOSX-universal.dmg"
+      when: ansible_system == "Darwin"
 
-    - name: Download RealVNC Viewer DEB
-      ansible.builtin.get_url:
-        url: "{{ realvnc_url }}"
-        dest: "/tmp/{{ realvnc_filename }}"
+    - name: RealVNC | Set filename for Linux x86_64 (deb)
+      set_fact:
+        realvnc_architecture_file: "Linux-x64.deb"
+      when:
+        - ansible_system == "Linux"
+        - ansible_architecture == "x86_64"
+
+    - name: RealVNC | Fail if neither macOS nor Linux x86_64
+      assert:
+        that:
+          - realvnc_architecture_file is defined
+        fail_msg: >
+          This playbook only supports macOS or 64-bit Linux (x86_64). 
+          (Kernel={{ ansible_facts['kernel'] }}, Arch={{ ansible_facts['architecture'] }})
+
+    - name: Show every variable available to this play
+      debug:
+        var: vars
+
+    ########################################################
+    # 2) Download the appropriate package into /tmp/realvnc_install
+    ########################################################
+    - name: RealVNC | Create temporary directory for download
+      file:
+        path: /tmp/realvnc_install
+        state: directory
+        mode: '0755'
+
+    - name: RealVNC | Download package from official site
+      get_url:
+        url: "{{ realvnc_download_url }}"
+        dest: "/tmp/realvnc_install/{{ realvnc_filename }}"
         mode: '0644'
 
-    - name: Install RealVNC Viewer DEB package
-      ansible.builtin.apt:
-        deb: "/tmp/{{ realvnc_filename }}"
+    ########################################################
+    # 3a) Install on Linux x86_64 via apt/dpkg
+    ########################################################
+    - name: RealVNC (Linux) | Ensure dpkg/apt can install .deb
+      apt:
+        name:
+          - wget
+        state: present
+        update_cache: yes
+      when:
+        - ansible_facts['kernel'] == 'Linux'
+        - ansible_facts['architecture'] == 'x86_64'
 
-    - name: Remove downloaded DEB file
-      ansible.builtin.file:
-        path: "/tmp/{{ realvnc_filename }}"
+    - name: RealVNC (Linux) | Install the downloaded .deb
+      apt:
+        deb: "/tmp/realvnc_install/{{ realvnc_filename }}"
+      when:
+        - ansible_facts['kernel'] == 'Linux'
+        - ansible_facts['architecture'] == 'x86_64'
+
+    ########################################################
+    # 3b) Install on macOS by mounting the .dmg + copying .app
+    ########################################################
+    - name: RealVNC (macOS) | Attach the DMG
+      command: >
+        hdiutil attach /tmp/realvnc_install/{{ realvnc_filename }} -nobrowse
+      register: attach_result
+      changed_when: "'/Volumes/' in attach_result.stdout"
+      when: ansible_facts['kernel'] == 'Darwin'
+
+    - name: RealVNC (macOS) | Copy VNC Viewer.app into /Applications
+      copy:
+        remote_src: true
+        src: "/Volumes/VNC\\ Viewer/VNC\\ Viewer.app"
+        dest: /Applications/
+        mode: '0755'
+      when: ansible_facts['kernel'] == 'Darwin'
+
+    - name: RealVNC (macOS) | Detach the DMG
+      command: >
+        hdiutil detach "{{ item }}"
+      loop: "{{ attach_result.stdout_lines | select('search','/Volumes/') | list }}"
+      when: ansible_facts['kernel'] == 'Darwin'
+
+    ########################################################
+    # 4) Cleanup the temporary download directory
+    ########################################################
+    - name: RealVNC | Remove temporary download folder
+      file:
+        path: /tmp/realvnc_install
         state: absent
