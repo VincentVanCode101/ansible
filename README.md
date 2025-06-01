@@ -65,7 +65,6 @@ ansible-playbook playbooks/applications/core_snap.yml
 ansible-playbook playbooks/applications/fzf.yml # On a new system for it to take affect, you have to call ~/.fzf/install
 ansible-playbook playbooks/applications/install_zsh.yml # Make sure to log-out and in again for this to take affect
 ansible-playbook playbooks/applications/neovim.yml
-ansible-playbook playbooks/applications/obsidian.yml
 ```
 #### GUIs
 ```bash
@@ -73,6 +72,7 @@ ansible-playbook playbooks/gui/brave_browser.yml
 ansible-playbook playbooks/gui/spotify.yml
 ansible-playbook playbooks/gui/okular.yml
 ansible-playbook playbooks/gui/google_chrome.yml
+ansible-playbook playbooks/gui/obsidian.yml
 ```
 #### Language Environments
 ```bash
