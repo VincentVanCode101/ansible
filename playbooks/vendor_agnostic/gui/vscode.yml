@@ -34,9 +34,8 @@
             mode: '0644'
 
         - name: VSCode | Convert GPG key to APT keyring format (Linux)
-          ansible.builtin.command: >
-            gpg --dearmor < /tmp/packages.microsoft.gpg
-            > /etc/apt/keyrings/packages.microsoft.gpg
+          ansible.builtin.command:
+            cmd: gpg --dearmor -o /etc/apt/keyrings/packages.microsoft.gpg /tmp/packages.microsoft.gpg
           args:
             creates: /etc/apt/keyrings/packages.microsoft.gpg
 
