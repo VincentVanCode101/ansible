@@ -17,7 +17,7 @@ xcode-select --install
 ```bash
 mkdir -p ~/personal
 cd ~/personal
-curl https://raw.githubusercontent.com/VincentVanCode101/ansible/main/resources/setup | sh -s ~/personal/ansible
+curl https://raw.githubusercontent.com/VincentVanCode101/ansible/main/resources/setup | bash -s ~/personal/ansible
 ```
 
 ### Vendor agnostic
