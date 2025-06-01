@@ -39,6 +39,7 @@
               - jq
               - xdotool # workspace manipulation
               - tldr
+              - openssh-server
               - shutter # advanced screenshots
               - blueman # bluetooth
               - unzip
