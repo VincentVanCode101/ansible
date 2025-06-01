@@ -5,24 +5,24 @@
 
   tasks:
     - name: Obsidian | Remove old Obsidian .deb package (if any)
-      apt:
+      ansible.builtin.apt:
         name: obsidian
         state: absent
 
     - name: Obsidian | Find Obsidian binary location
-      command: whereis obsidian
+      ansible.builtin.command: whereis obsidian
       register: whereis_obsidian
       changed_when: false
 
     - name: Obsidian | Remove leftover Obsidian binaries
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: absent
-      with_items: "{{ whereis_obsidian.stdout.split()[1:] }}"
+      loop: "{{ whereis_obsidian.stdout.split()[1:] }}"
       when: whereis_obsidian.stdout != 'obsidian:'
 
     - name: Obsidian | Ensure snapd is installed
-      apt:
+      ansible.builtin.apt:
         name: snapd
         state: present
         update_cache: yes
@@ -32,5 +32,3 @@
         name: obsidian
         classic: yes
         state: present
-      args:
-        creates: /snap/bin/obsidian  # Prevents re-running if already installed
