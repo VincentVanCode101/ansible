@@ -63,13 +63,6 @@
     # macOS (Darwin) installation via unzip     #
     #############################################
     - block:
-        - name: VSCode | Determine VSCode download URL for macOS
-          ansible.builtin.set_fact:
-            vscode_download_url: >-
-              {{ "https://update.code.visualstudio.com/latest/darwin-arm64/stable"
-                 if ansible_facts.architecture == 'aarch64'
-                 else "https://update.code.visualstudio.com/latest/darwin/stable" }}
-
         - name: VSCode | Create temporary directory for download (macOS)
           ansible.builtin.file:
             path: /tmp/vscode_install
@@ -78,7 +71,7 @@
 
         - name: VSCode | Download VSCode ZIP bundle (macOS)
           ansible.builtin.get_url:
-            url: "{{ vscode_download_url }}"
+            url: "https://code.visualstudio.com/sha/download?build=stable&os=darwin-universal"
             dest: /tmp/vscode_install/vscode.zip
             mode: '0644'
             force_basic_auth: yes
