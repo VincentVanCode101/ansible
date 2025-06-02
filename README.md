@@ -92,7 +92,8 @@ ansible-playbook playbooks/chris_config/setup_secondbrain.yml
 
 ### MacOS stuff
 ```bash
-ansible-playbook playbooks/macos/brew.yml
+ansible-playbook playbooks/macos/core_brew.yml
+ansible-playbook playbooks/macos/aerospace.yml
 ```
 
 # Ponderings
