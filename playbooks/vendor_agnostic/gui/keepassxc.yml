@@ -30,8 +30,7 @@
       become: true
 
     - name: KeePassXC - macOS | Install or upgrade KeePassXC via Homebrew
-      community.general.homebrew:
+      community.general.homebrew_cask:
         name: keepassxc
-        cask: yes
         state: latest
       when: ansible_system == 'Darwin'
