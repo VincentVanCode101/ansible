@@ -36,6 +36,7 @@
               - gimp
               - htop
               # - eza #TODO: find the error here...why can't I apt-get install eza on ubuntu 24.04 -> previously exa, see my tree script
+              - rofi # d-menu replacement
               - jq
               - xdotool # workspace manipulation
               - tldr
