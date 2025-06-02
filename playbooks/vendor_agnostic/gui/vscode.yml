@@ -81,6 +81,7 @@
             url: "{{ vscode_download_url }}"
             dest: /tmp/vscode_install/vscode.zip
             mode: '0644'
+            force_basic_auth: yes
 
         - name: VSCode | Unarchive VSCode into /Applications (macOS)
           ansible.builtin.unarchive:
