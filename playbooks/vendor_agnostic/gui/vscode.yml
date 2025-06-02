@@ -66,9 +66,9 @@
         - name: VSCode | Determine VSCode download URL for macOS
           ansible.builtin.set_fact:
             vscode_download_url: >-
-              {{ "https://code.visualstudio.com/docs/?dv=darwinarm64"
+              {{ "https://update.code.visualstudio.com/latest/darwin-arm64/stable"
                  if ansible_facts.architecture == 'aarch64'
-                 else "https://code.visualstudio.com/docs/?dv=darwin" }}
+                 else "https://update.code.visualstudio.com/latest/darwin/stable" }}
 
         - name: VSCode | Create temporary directory for download (macOS)
           ansible.builtin.file:
