@@ -32,3 +32,10 @@
         name: obsidian
         classic: yes
         state: present
+
+    - name: Obsidian | Ensure /snap/bin/obsidian exists as symlink
+      ansible.builtin.file:
+        src: /usr/bin/snap
+        path: /snap/bin/obsidian
+        state: link
+        force: yes
