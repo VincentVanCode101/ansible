@@ -85,24 +85,24 @@
         - name: Docker | Download Docker .dmg (macOS)
           ansible.builtin.get_url:
             url: https://orbstack.dev/download/stable/latest/arm64
-            dest: /tmp/docker.dmg
+            dest: /tmp/OrbStack.dmg
             mode: '0644'
           register: dmg_download
 
-        - name: Docker | Ensure Docker.app is not already installed (macOS)
+        - name: Docker | Ensure OrbStack.app is not already installed (macOS)
           ansible.builtin.stat:
-            path: /Applications/Docker.app
+            path: /Applications/OrbStack.app
           register: docker_app
 
         - name: Docker | Mount the DMG (macOS)
           ansible.builtin.command: >
-            hdiutil attach /tmp/docker.dmg -nobrowse -mountpoint /Volumes/DockerDMG
+            hdiutil attach /tmp/OrbStack.dmg -nobrowse -mountpoint /Volumes/DockerDMG
           when: not docker_app.stat.exists
           register: mount_result
 
-        - name: Docker | Copy Docker.app to /Applications (macOS)
+        - name: Docker | Copy OrbStack.app to /Applications (macOS)
           ansible.builtin.command: >
-            cp -R /Volumes/DockerDMG/Docker.app /Applications/
+            cp -R /Volumes/DockerDMG/OrbStack.app /Applications/
           when: not docker_app.stat.exists
 
         - name: Docker | Unmount the DMG (macOS)
@@ -112,7 +112,7 @@
 
         - name: Docker | Clean up downloaded DMG (macOS)
           ansible.builtin.file:
-            path: /tmp/docker.dmg
+            path: /tmp/OrbStack.dmg
             state: absent
       when: is_darwin
 
