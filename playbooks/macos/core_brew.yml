@@ -1,11 +1,42 @@
 ---
-- name: Aerospace | Install Aerospace on MacOs
+- name: Brew-Packages | Install core Homebrew formulae & casks
   hosts: localhost
-  become: false
-
+  connection: local
+  gather_facts: true
+  vars:
+    brew_formulae:
+      - git
+      - tmux
+      - neovim
+      - htop
+      - wget
+      - jq
+      - gimp
+    brew_casks:
+      - google-chrome
+      - brave-browser
+      - iterm2
+      - spotify
+      - discord
+      - libreoffice
   tasks:
-    - name: Aerospace | Install Aerospace via brew cask
-      community.general.homebrew_cask:
-        name: nikitabobko/tap/aerospace
-        state: latest
 
+    - name: Ensure we're on macOS
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['os_family'] == 'Darwin'
+        fail_msg: "This playbook only works on macOS (Darwin)."
+
+    - name: Brew-Packages | Ensure Homebrew is installed
+      community.general.homebrew:
+        state: present
+
+    - name: Brew-Packages | Install Homebrew formulae
+      community.general.homebrew:
+        name: "{{ brew_formulae }}"
+        state: present
+
+    - name: Brew-Packages | Install Homebrew casks
+      community.general.homebrew_cask:
+        name: "{{ brew_casks }}"
+        state: present

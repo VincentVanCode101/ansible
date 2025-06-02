@@ -1,0 +1,12 @@
+
+---
+- name: Aerospace | Install Aerospace on MacOs
+  hosts: localhost
+  become: false
+
+  tasks:
+    - name: Aerospace | Install Aerospace via brew cask
+      community.general.homebrew_cask:
+        name: nikitabobko/tap/aerospace
+        state: latest
+
