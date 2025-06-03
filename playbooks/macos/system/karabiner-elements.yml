@@ -1,0 +1,43 @@
+---
+- name: Install Karabiner-Elements on macOS
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    app_name: Karabiner-Elements
+    dmg_url: "https://github.com/pqrs-org/Karabiner-Elements/releases/download/v15.3.0/Karabiner-Elements-15.3.0.dmg"
+    dmg_file: "/tmp/{{ app_name }}.dmg"
+    mount_point: "/Volumes/{{ app_name }}"
+    app_path: "/Applications/{{ app_name }}.app"
+
+  tasks:
+    - name: Check if Karabiner-Elements is already installed
+      command: pkgutil --pkg-info org.pqrs.Karabiner-Elements
+      register: karabiner_installed
+      failed_when: false
+      changed_when: false
+
+    - name: Download Karabiner-Elements DMG
+      get_url:
+        url: "{{ dmg_url }}"
+        dest: "{{ dmg_file }}"
+      when: karabiner_installed.rc != 0
+
+    - name: Mount the DMG
+      command: hdiutil attach "{{ dmg_file }}" -nobrowse -mountpoint "{{ mount_point }}"
+      when: karabiner_installed.rc != 0
+
+    - name: Install Karabiner-Elements from PKG
+      command: installer -pkg "{{ mount_point }}/Karabiner-Elements.pkg" -target /
+      become: yes
+      when: karabiner_installed.rc != 0
+
+    - name: Unmount the DMG
+      command: hdiutil detach "{{ mount_point }}"
+      when: karabiner_installed.rc != 0
+
+    - name: Remove the downloaded DMG file
+      file:
+        path: "{{ dmg_file }}"
+        state: absent
+      when: karabiner_installed.rc != 0
