@@ -1,19 +1,16 @@
 ---
-- name: WhatsApp | Cross‐Platform Installation (macOS only)
+- name: WhatsApp | macOS Installation via DMG
   hosts: localhost
   become: true
 
   pre_tasks:
-    - name: Determine OS family
+    - name: Determine if this is macOS
       ansible.builtin.set_fact:
         is_darwin: "{{ ansible_system == 'Darwin' }}"
 
   tasks:
-    #############################################
-    # macOS (Darwin) installation via DMG       #
-    #############################################
     - block:
-        - name: WhatsApp | Create temporary directory for download (macOS)
+        - name: WhatsApp | Create temporary directory for download
           ansible.builtin.file:
             path: /tmp/whatsapp_install
             state: directory
@@ -28,23 +25,43 @@
         - name: WhatsApp | Attach WhatsApp DMG (macOS)
           ansible.builtin.command:
             cmd: hdiutil attach /tmp/whatsapp_install/WhatsApp.dmg -nobrowse
+          register: attach_result
 
-        - name: WhatsApp | Copy WhatsApp.app to /Applications (macOS)
+        - name: WhatsApp | Find mounted WhatsApp.app directory (macOS)
+          ansible.builtin.find:
+            paths: /Volumes
+            patterns: "WhatsApp.app"
+            recurse: yes
+            file_type: directory
+          register: whatsapp_app
+
+        - name: WhatsApp | Fail if WhatsApp.app wasn’t found
+          ansible.builtin.fail:
+            msg: "Could not find WhatsApp.app under /Volumes after mounting the DMG."
+          when: whatsapp_app.matched == 0
+
+        - name: WhatsApp | Copy WhatsApp.app into /Applications
           ansible.builtin.command:
-            cmd: cp -R /Volumes/WhatsApp/WhatsApp.app /Applications/
+            cmd: cp -R "{{ whatsapp_app.files[0].path }}" /Applications/
+          args:
+            creates: /Applications/WhatsApp.app
 
-        - name: WhatsApp | Set ownership of WhatsApp.app in /Applications (macOS)
+        - name: WhatsApp | Ensure ownership of WhatsApp.app in /Applications
           ansible.builtin.file:
             path: /Applications/WhatsApp.app
-            owner: "{{ lookup('env', 'USER') }}"
+            owner: "{{ lookup('env','USER') }}"
             group: staff
             recurse: yes
 
-        - name: WhatsApp | Detach WhatsApp DMG (macOS)
-          ansible.builtin.command:
-            cmd: hdiutil detach /Volumes/WhatsApp -quiet
+        - name: WhatsApp | Set mount_dir fact for detaching
+          ansible.builtin.set_fact:
+            mount_dir: "{{ whatsapp_app.files[0].path | dirname }}"
 
-        - name: WhatsApp | Remove temporary download directory (macOS)
+        - name: WhatsApp |Detach WhatsApp DMG
+          ansible.builtin.command:
+            cmd: hdiutil detach "{{ mount_dir }}" -quiet
+
+        - name: WhatsApp | Remove temporary download directory
           ansible.builtin.file:
             path: /tmp/whatsapp_install
             state: absent
