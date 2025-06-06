@@ -1,0 +1,25 @@
+---
+- name: Teams |macOS Installation
+  hosts: localhost
+  become: true
+
+  pre_tasks:
+    - name: Determine OS family
+      ansible.builtin.set_fact:
+        is_darwin: "{{ ansible_system == 'Darwin' }}"
+
+  tasks:
+    #############################################
+    # macOS (Darwin) installation via Homebrew Cask #
+    #############################################
+    - name: Teams | Install Microsoft Teams via Homebrew Cask
+      ansible.builtin.homebrew_cask:
+        name: microsoft-teams
+        state: present
+      become: false
+      when: is_darwin
+
+    - name: Teams | Skipping installation on non‐macOS hosts
+      ansible.builtin.debug:
+        msg: "Skipping Microsoft Teams installation; this host is not macOS."
+      when: not is_darwin

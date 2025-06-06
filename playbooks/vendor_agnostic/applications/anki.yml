@@ -1,0 +1,73 @@
+---
+- name: Anki | Install Anki (Linux)
+  hosts: localhost
+  become: true
+
+  vars:
+    anki_version: "25.02.6"
+    anki_filename: "anki-25.02.6-linux-qt6.tar.zst"
+    anki_download_url: "https://github.com/ankitects/anki/releases/download/{{ anki_version }}/{{ anki_filename }}"
+    tmp_dir: "/tmp/anki_install"
+
+  pre_tasks:
+    - name: Determine OS family and architecture
+      ansible.builtin.set_fact:
+        is_linux: "{{ ansible_system == 'Linux' }}"
+        is_darwin: "{{ ansible_system == 'Darwin' }}"
+        is_x86_64: "{{ ansible_architecture == 'x86_64' }}"
+
+  tasks:
+    - block:
+        - name: Anki | Ensure host is 64-bit Linux
+          ansible.builtin.fail:
+            msg: >
+              Unsupported environment: Anki’s packaged Linux build only works on
+              64-bit glibc-based distributions (x86_64). Detected architecture is
+              {{ ansible_architecture }}.
+          when: not is_x86_64
+
+        - name: Anki | Install required libraries (Debian/Ubuntu)
+          ansible.builtin.apt:
+            name:
+              - libxcb-xinerama0
+              - libxcb-cursor0
+              - libnss3
+              - zstd
+            state: present
+            update_cache: true
+
+        - name: Anki | Create a temporary directory for download
+          ansible.builtin.file:
+            path: "{{ tmp_dir }}"
+            state: directory
+            mode: '0755'
+
+        - name: Anki | Download Anki tarball
+          ansible.builtin.get_url:
+            url: "{{ anki_download_url }}"
+            dest: "{{ tmp_dir }}/{{ anki_filename }}"
+            mode: '0644'
+
+        - name: Anki | Extract the Anki archive
+          ansible.builtin.command: >
+            tar xaf {{ tmp_dir }}/{{ anki_filename }} -C {{ tmp_dir }}
+          args:
+            creates: "{{ tmp_dir }}/anki-{{ anki_version }}-linux-qt6"
+
+        - name: Anki | Run the install script
+          ansible.builtin.command: >
+            ./install.sh
+          args:
+            chdir: "{{ tmp_dir }}/anki-{{ anki_version }}-linux-qt6"
+          become: true
+
+        - name: Anki | Cleanup temporary files
+          ansible.builtin.file:
+            path: "{{ tmp_dir }}"
+            state: absent
+      when: is_linux
+
+    - name: Anki | Abort on non-Linux hosts
+      ansible.builtin.fail:
+        msg: "This Ansible playbook only supports installation on Linux hosts."
+      when: not is_linux
