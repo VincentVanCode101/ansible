@@ -1,0 +1,31 @@
+---
+- name: Powerlevel10k | Install and Configure Theme
+  hosts: localhost
+  become: false
+  gather_facts: true
+
+  pre_tasks:
+    - name: Check if running on macOS
+      ansible.builtin.set_fact:
+        is_darwin: "{{ ansible_system == 'Darwin' }}"
+
+  tasks:
+    - name: Ensure Homebrew is installed (macOS)
+      ansible.builtin.command: which brew
+      register: brew_check
+      failed_when: brew_check.rc != 0
+      when: is_darwin
+
+    - name: Install powerlevel10k via Homebrew (macOS)
+      ansible.builtin.homebrew:
+        name: powerlevel10k
+        state: present
+      when: is_darwin
+
+    - name: Ensure powerlevel10k is sourced in .zshrc (macOS)
+      ansible.builtin.lineinfile:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+        line: 'source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme'
+        create: yes
+        insertafter: EOF
+      when: is_darwin
