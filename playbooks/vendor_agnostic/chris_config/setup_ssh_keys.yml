@@ -4,6 +4,10 @@
   vars_files:
     - ../../vars.yml
 
+  vars:
+    ssh_key_dir: "{{ lookup('env', 'HOME') }}/.ssh"
+    source_key_dir: "{{ playbook_dir }}/../../../resources/.ssh"
+
   tasks:
     - name: SSH-Keys | Ensure .ssh directory exists
       file:

@@ -6,30 +6,43 @@
     - ../vars.yml
 
   pre_tasks:
-    - name: second-brain | Update APT cache
-      include_role:
-        name: update_apt
+    - name: Determine OS family
+      ansible.builtin.set_fact:
+        is_linux: "{{ ansible_system == 'Linux' }}"
+        is_darwin: "{{ ansible_system == 'Darwin' }}"
 
   vars:
     # Directly clone via SSH using the alias configured in my SSH config.
     repo_url_ssh: "git@github.com-second-brain:VincentVanCode101/second-brain.git"
-    repo_dest: "{{ personal }}/notes/second-brain"
-    service_src: "../../resources/autosync.service"
-    service_dest: "/etc/systemd/system/autosync.service"
+    repo_dest: "{{ personal_notes_path }}/second-brain"
+    service_src: "../../resources/second-brain-autosync.service"
+    service_dest: "/etc/systemd/system/second-brain-autosync.service"
+    mac_service_src: "../../resources/second-brain-autosync.plist"
+    mac_service_dest: "/Library/LaunchDaemons/com.secondbrain.autosync.plist"
 
   tasks:
-    - name: second-brain | Ensure Git is installed
-      apt:
+    - name: Fail if unsupported OS
+      ansible.builtin.fail:
+        msg: "This playbook is only supported on Linux or macOS."
+      when: ansible_system not in ['Linux', 'Darwin']
+
+    # Linux-specific tasks
+    - name: second-brain - Linux | Ensure Git is installed
+      ansible.builtin.apt:
         name: git
         state: present
+      when: is_linux
+      become: true
 
-    - name: second-brain | Install inotify-tools
-      apt:
-        name: inotify-tools
+    - name: second-brain - Linux | Install fswatch
+      ansible.builtin.apt:
+        name: fswatch
         state: present
+      when: is_linux
+      become: true
 
-    - name: second-brain | Clone the second-brain repository via SSH
-      git:
+    - name: second-brain - Linux | Clone the second-brain repository via SSH
+      ansible.builtin.git:
         repo: "{{ repo_url_ssh }}"
         dest: "{{ repo_dest }}"
         version: "main"
@@ -38,21 +51,57 @@
       become: false
       environment:
         HOME: "{{ lookup('env','HOME') }}"
+      when: is_linux
 
-    - name: second-brain | Copy autosync.service file to systemd directory
-      copy:
+    - name: second-brain - Linux | Copy second-brain-autosync.service file to systemd directory
+      ansible.builtin.copy:
         src: "{{ service_src }}"
         dest: "{{ service_dest }}"
         owner: root
         group: root
         mode: "0644"
+      when: is_linux
 
-    - name: second-brain | Reload systemd daemon
-      systemd:
+    - name: second-brain - Linux | Reload systemd daemon
+      ansible.builtin.systemd:
         daemon_reload: yes
+      when: is_linux
 
-    - name: second-brain | Enable and start autosync service
-      systemd:
-        name: autosync.service
+    - name: second-brain - Linux | Enable and start second-brain-autosync service
+      ansible.builtin.systemd:
+        name: second-brain-autosync.service
         enabled: yes
         state: started
+      when: is_linux
+
+    # macOS-specific tasks
+    - name: second-brain - macOS | Clone the second-brain repository via SSH
+      ansible.builtin.git:
+        repo: "{{ repo_url_ssh }}"
+        dest: "{{ repo_dest }}"
+        version: "main"
+        force: yes
+        accept_hostkey: yes
+      become: false
+      environment:
+        HOME: "{{ lookup('env','HOME') }}"
+      when: is_darwin
+
+    - name: second-brain - macOS | Copy second-brain-autosync.plist to LaunchDaemons directory
+      ansible.builtin.copy:
+        src: "{{ mac_service_src }}"
+        dest: "{{ mac_service_dest }}"
+        owner: root
+        group: wheel
+        mode: "0644"
+      when: is_darwin
+
+    - name: second-brain - macOS | Load LaunchDaemons service
+      ansible.builtin.command:
+        cmd: "launchctl load -w {{ mac_service_dest }}"
+      when: is_darwin
+
+    - name: second-brain - macOS | Start LaunchDaemons service
+      ansible.builtin.command:
+        cmd: "launchctl start com.secondbrain.autosync"
+      when: is_darwin

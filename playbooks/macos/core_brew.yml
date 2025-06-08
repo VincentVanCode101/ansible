@@ -13,6 +13,7 @@
       - jq
       - gimp
       - stow
+      - fswatch
     brew_casks:
       - google-chrome
       - brave-browser

@@ -36,7 +36,6 @@
               - gimp
               - htop
               # - eza #TODO: find the error here...why can't I apt-get install eza on ubuntu 24.04 -> previously exa, see my tree script
-              - rofi # d-menu replacement
               - net-tools # netstat and the like
               - jq
               - xdotool # workspace manipulation
@@ -51,6 +50,7 @@
               - maim # screenshots in i3
               - xfce4-appfinder
               - apache2-utils # ab apache-benchmark
+              - fswatch # useing instead of inotifywait for second-brain deamon
             state: present
             update_cache: yes
       rescue:

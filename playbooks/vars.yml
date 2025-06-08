@@ -1,14 +1,12 @@
 current_user: "{{ lookup('ansible.builtin.env', 'USER') }}"
 home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
-personal: "{{ home }}/personal"
+personal_notes_path: "{{ home }}/personal/notes"
 
 ssh_keys:
   - id_rsa
   - id_ed25519
   - id_second-brain_deploy
   - id_ed25519_github_vincentvancode101
-ssh_key_dir: "{{ lookup('env', 'HOME') }}/.ssh"
-source_key_dir: "../../resources/.ssh"
 
 oh_my_zsh_path: "/home/{{ current_user }}/.oh-my-zsh"
 zshrc_path: "/home/{{ current_user }}/.zshrc"
@@ -22,3 +20,13 @@ important_repo_git_urls:
   - git@github.com:VincentVanCode101/shellcheck.git
   - git@github.com:VincentVanCode101/docker-apps.git
   - git@github.com:VincentVanCode101/the-beter-git-init.git
+  - git@github.com:VincentVanCode101/craft-templates.git
+  - git@github.com:VincentVanCode101/r-stuff.git
+  - git@github.com:VincentVanCode101/ergodicity-simulation-r.git
+  - git@github.com:VincentVanCode101/here.git
+  - git@github.com:VincentVanCode101/binomial-distribution.git
+  - git@github.com:VincentVanCode101/jensens-inequality-py.git
+  - git@github.com:VincentVanCode101/rock-paper-scissors-championship-grid-simulation.git
+  - git@github.com:VincentVanCode101/messanger.git
+  - git@github.com:VincentVanCode101/java-dsa.git
+  
