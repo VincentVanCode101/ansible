@@ -2,7 +2,7 @@
 - name: SSH-Keys | Setup my ssh keys
   hosts: localhost
   vars_files:
-    - ../vars.yml
+    - ../../vars.yml
 
   tasks:
     - name: SSH-Keys | Ensure .ssh directory exists

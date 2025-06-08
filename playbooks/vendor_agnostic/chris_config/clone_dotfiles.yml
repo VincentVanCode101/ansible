@@ -19,7 +19,7 @@
       become: false
       become_user: "{{ current_user }}"
       ansible.builtin.git:
-        repo: 'git@gitlab.com:christoph.tech101/dotfiles.git'
+        repo: 'git@github.com:VincentVanCode101/dotfiles.git'
         dest: "{{ lookup('env', 'HOME') }}/dotfiles"
         recursive: yes
         update: yes
