@@ -1,0 +1,18 @@
+---
+- name: Install important repos | What the name says
+  hosts: localhost
+  
+  vars_files:
+    - ../../vars.yml
+  
+  tasks:
+    - name: Clone repos
+      ansible.builtin.git:
+        repo: "{{ item }}"
+        dest: "{{ lookup('env', 'HOME') }}/projects/{{ item | basename | regex_replace('\\.git$', '') }}"
+        recursive: yes
+        update: yes
+        accept_hostkey: yes
+        version: main
+      loop: "{{ important_repo_git_urls }}"
+        

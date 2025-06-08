@@ -12,6 +12,7 @@
       - wget
       - jq
       - gimp
+      - stow
     brew_casks:
       - google-chrome
       - brave-browser

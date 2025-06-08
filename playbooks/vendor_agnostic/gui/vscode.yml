@@ -63,33 +63,33 @@
     # macOS (Darwin) installation via unzip     #
     #############################################
     - block:
-        - name: VSCode | Create temporary directory for download (macOS)
+        - name: VSCode - macOS | Create temporary directory for download
           ansible.builtin.file:
             path: /tmp/vscode_install
             state: directory
             mode: '0755'
 
-        - name: VSCode | Download VSCode ZIP bundle (macOS)
+        - name: VSCode - macOS | Download VSCode ZIP bundle
           ansible.builtin.get_url:
             url: "https://code.visualstudio.com/sha/download?build=stable&os=darwin-universal"
             dest: /tmp/vscode_install/vscode.zip
             mode: '0644'
             force_basic_auth: yes
 
-        - name: VSCode | Unarchive VSCode into /Applications (macOS)
+        - name: VSCode - macOS | Unarchive VSCode into /Applications
           ansible.builtin.unarchive:
             src: /tmp/vscode_install/vscode.zip
             dest: /Applications
             remote_src: yes
 
-        - name: VSCode | Set ownership of VSCode.app in /Applications (macOS)
+        - name: VSCode - macOS | Set ownership of VSCode.app in /Applications
           ansible.builtin.file:
             path: /Applications/Visual Studio Code.app
             owner: "{{ lookup('env', 'USER') }}"
             group: staff
             recurse: yes
 
-        - name: VSCode | Remove temporary download directory (macOS)
+        - name: VSCode - macOS | Remove temporary download directory
           ansible.builtin.file:
             path: /tmp/vscode_install
             state: absent

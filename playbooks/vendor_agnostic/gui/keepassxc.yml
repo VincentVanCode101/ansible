@@ -3,6 +3,12 @@
   hosts: localhost
   become: false
 
+  pre_tasks:
+    - name: Determine OS family
+      ansible.builtin.set_fact:
+        is_linux: "{{ ansible_system == 'Linux' }}"
+        is_darwin: "{{ ansible_system == 'Darwin' }}"
+
   tasks:
     - name: Fail if unsupported OS
       ansible.builtin.fail:
@@ -12,13 +18,13 @@
     - name: KeePassXC - Linux | Update APT cache
       include_role:
         name: update_apt
-      when: ansible_system == 'Linux'
+      when: is_linux
 
     - name: KeePassXC - Linux | Add KeePassXC PPA
       ansible.builtin.apt_repository:
         repo: ppa:phoerious/keepassxc
         state: present
-      when: ansible_system == 'Linux'
+      when: is_linux
       become: true
 
     - name: KeePassXC - Linux | Install KeePassXC
@@ -26,11 +32,11 @@
         name: keepassxc
         state: present
         update_cache: yes
-      when: ansible_system == 'Linux'
+      when: is_linux
       become: true
 
     - name: KeePassXC - macOS | Install or upgrade KeePassXC via Homebrew
       community.general.homebrew_cask:
         name: keepassxc
         state: latest
-      when: ansible_system == 'Darwin'
+      when: is_darwin

@@ -98,3 +98,8 @@ ansible-playbook playbooks/macos/aerospace.yml
 
 # Ponderings
 - should I instal node? npm? nvm? cpp-comiler? clang?
+
+## Mac notes:
+defaults write -g ApplePressAndHoldEnabled -bool false
+
+to anble my alt+e connectToContainer.sh on mac in iTerm click: -> iTerm2 -> Settings -> Profiles -> Keys -> General -> "Left option key: Esc+"

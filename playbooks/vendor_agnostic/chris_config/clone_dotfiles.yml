@@ -2,7 +2,7 @@
 - name: Dotfiles | Set up my dotfiles
   hosts: localhost
   vars_files:
-    - ../vars.yml
+    - ../../vars.yml
 
   pre_tasks:
     - name: Dotfiles | Update APT cache
