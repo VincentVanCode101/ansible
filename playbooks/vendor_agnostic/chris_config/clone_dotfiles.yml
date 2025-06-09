@@ -5,15 +5,22 @@
     - ../../vars.yml
 
   pre_tasks:
+    - name: Determine OS family
+      ansible.builtin.set_fact:
+        is_linux: "{{ ansible_system == 'Linux' }}"
+        is_darwin: "{{ ansible_system == 'Darwin' }}"
+
     - name: Dotfiles | Update APT cache
       include_role:
         name: update_apt
+      when: is_linux
 
   tasks:
     - name: Dotfiles |Installing stow
       become: true
       apt: 
         name: stow
+      when: is_linux
 
     - name: Dotfiles | Cloning dotfiles
       become: false
