@@ -3,7 +3,7 @@
   hosts: localhost
   become: true
   vars_files:
-    - ../vars.yml
+    - ../../vars.yml
 
   pre_tasks:
     - name: Determine OS family
@@ -15,10 +15,11 @@
     # Directly clone via SSH using the alias configured in my SSH config.
     repo_url_ssh: "git@github.com-second-brain:VincentVanCode101/second-brain.git"
     repo_dest: "{{ personal_notes_path }}/second-brain"
-    service_src: "../../resources/second-brain-autosync.service"
+    service_src: "../../../resources/second-brain-autosync.service"
     service_dest: "/etc/systemd/system/second-brain-autosync.service"
-    mac_service_src: "../../resources/second-brain-autosync.plist"
-    mac_service_dest: "/Library/LaunchDaemons/com.secondbrain.autosync.plist"
+    mac_service_src: "../../../resources/second-brain-autosync.plist"
+    mac_service_dest: "/Users/christoph/Library/LaunchAgents/com.secondbrain.autosync.plist"
+
 
   tasks:
     - name: Fail if unsupported OS
@@ -51,7 +52,6 @@
       become: false
       environment:
         HOME: "{{ lookup('env','HOME') }}"
-      when: is_linux
 
     - name: second-brain - Linux | Copy second-brain-autosync.service file to systemd directory
       ansible.builtin.copy:
@@ -87,21 +87,22 @@
         HOME: "{{ lookup('env','HOME') }}"
       when: is_darwin
 
-    - name: second-brain - macOS | Copy second-brain-autosync.plist to LaunchDaemons directory
+    - name: second-brain - macOS | Copy second-brain-autosync.plist to LaunchAgents directory
       ansible.builtin.copy:
         src: "{{ mac_service_src }}"
         dest: "{{ mac_service_dest }}"
-        owner: root
-        group: wheel
+        group: staff
         mode: "0644"
+      become: false
       when: is_darwin
 
-    - name: second-brain - macOS | Load LaunchDaemons service
-      ansible.builtin.command:
-        cmd: "launchctl load -w {{ mac_service_dest }}"
+    - name: second-brain - macOS | Load LaunchAgent with launchctl load
+      ansible.builtin.shell: "launchctl load '{{ mac_service_dest }}'"
+      become: false
       when: is_darwin
 
-    - name: second-brain - macOS | Start LaunchDaemons service
-      ansible.builtin.command:
-        cmd: "launchctl start com.secondbrain.autosync"
+    - name: second-brain - macOS | Start LaunchAgent (kickstart)
+      ansible.builtin.shell: "launchctl start com.secondbrain.autosync"
+      become: false
       when: is_darwin
+
