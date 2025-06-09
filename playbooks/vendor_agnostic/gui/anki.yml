@@ -1,7 +1,8 @@
 ---
-- name: Anki | Install Anki (Linux)
+- name: Anki | Install Anki (Linux/macOS)
   hosts: localhost
   become: true
+  gather_facts: true
 
   vars:
     anki_version: "25.02.6"
@@ -49,14 +50,13 @@
             mode: '0644'
 
         - name: Anki | Extract the Anki archive
-          ansible.builtin.command: >
-            tar xaf {{ tmp_dir }}/{{ anki_filename }} -C {{ tmp_dir }}
+          ansible.builtin.command:
+            cmd: "tar xaf {{ tmp_dir }}/{{ anki_filename }} -C {{ tmp_dir }}"
           args:
             creates: "{{ tmp_dir }}/anki-{{ anki_version }}-linux-qt6"
 
         - name: Anki | Run the install script
-          ansible.builtin.command: >
-            ./install.sh
+          ansible.builtin.command: "./install.sh"
           args:
             chdir: "{{ tmp_dir }}/anki-{{ anki_version }}-linux-qt6"
           become: true
@@ -67,7 +67,15 @@
             state: absent
       when: is_linux
 
-    - name: Anki | Abort on non-Linux hosts
+    - block:
+        - name: Anki | Install Anki on macOS using Homebrew
+          become: false
+          community.general.homebrew_cask:
+            name: "anki"
+            state: present
+      when: is_darwin
+
+    - name: Anki | Abort on unsupported systems
       ansible.builtin.fail:
-        msg: "This Ansible playbook only supports installation on Linux hosts."
-      when: not is_linux
+        msg: "This Ansible playbook only supports Linux and macOS systems."
+      when: not (is_linux or is_darwin)
