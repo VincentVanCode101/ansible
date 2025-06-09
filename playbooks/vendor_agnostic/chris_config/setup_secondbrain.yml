@@ -107,6 +107,6 @@
       when: is_darwin
 
 # To manually restart:
-# launchctl unload ~/Library/LaunchAgents/com.secondbrain.autosync.plist                                                                                                      ✔  11:20:58 AM
+# launchctl unload ~/Library/LaunchAgents/com.secondbrain.autosync.plist
 # launchctl load ~/Library/LaunchAgents/com.secondbrain.autosync.plist
 # launchctl kickstart -k gui/$(id -u)/com.secondbrain.autosync
