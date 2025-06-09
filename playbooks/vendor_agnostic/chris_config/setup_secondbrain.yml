@@ -35,9 +35,9 @@
       when: is_linux
       become: true
 
-    - name: second-brain - Linux | Install fswatch
+    - name: second-brain - Linux | Install inotify-tools
       ansible.builtin.apt:
-        name: fswatch
+        name: inotify-tools
         state: present
       when: is_linux
       become: true
@@ -106,3 +106,7 @@
       become: false
       when: is_darwin
 
+# To manually restart:
+# launchctl unload ~/Library/LaunchAgents/com.secondbrain.autosync.plist                                                                                                      ✔  11:20:58 AM
+# launchctl load ~/Library/LaunchAgents/com.secondbrain.autosync.plist
+# launchctl kickstart -k gui/$(id -u)/com.secondbrain.autosync
