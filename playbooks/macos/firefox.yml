@@ -1,0 +1,68 @@
+---
+- name: Firefox | macOS Installation via DMG
+  hosts: localhost
+  become: true
+
+  pre_tasks:
+    - name: Determine if this is macOS
+      ansible.builtin.set_fact:
+        is_darwin: "{{ ansible_system == 'Darwin' }}"
+
+  tasks:
+    - block:
+        - name: Firefox | Create temporary directory for download
+          ansible.builtin.file:
+            path: /tmp/firefox_install
+            state: directory
+            mode: '0755'
+
+        - name: Firefox | Download Firefox DMG (macOS)
+          ansible.builtin.get_url:
+            url: "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US"
+            dest: /tmp/firefox_install/Firefox.dmg
+            mode: '0644'
+
+        - name: Firefox | Attach Firefox DMG (macOS)
+          ansible.builtin.command:
+            cmd: hdiutil attach /tmp/firefox_install/Firefox.dmg -nobrowse
+          register: attach_result
+
+        - name: Firefox | Find mounted Firefox.app directory (macOS)
+          ansible.builtin.find:
+            paths: /Volumes
+            patterns: "Firefox.app"
+            recurse: yes
+            file_type: directory
+          register: firefox_app
+
+        - name: Firefox | Fail if Firefox.app wasn’t found
+          ansible.builtin.fail:
+            msg: "Could not find Firefox.app under /Volumes after mounting the DMG."
+          when: firefox_app.matched == 0
+
+        - name: Firefox | Copy Firefox.app into /Applications
+          ansible.builtin.command:
+            cmd: cp -R "{{ firefox_app.files[0].path }}" /Applications/
+          args:
+            creates: /Applications/Firefox.app
+
+        - name: Firefox | Ensure ownership of Firefox.app in /Applications
+          ansible.builtin.file:
+            path: /Applications/Firefox.app
+            owner: "{{ lookup('env','USER') }}"
+            group: staff
+            recurse: yes
+
+        - name: Firefox | Set mount_dir fact for detaching
+          ansible.builtin.set_fact:
+            mount_dir: "{{ firefox_app.files[0].path | dirname }}"
+
+        - name: Firefox | Detach Firefox DMG
+          ansible.builtin.command:
+            cmd: hdiutil detach "{{ mount_dir }}" -quiet
+
+        - name: Firefox | Remove temporary download directory
+          ansible.builtin.file:
+            path: /tmp/firefox_install
+            state: absent
+      when: is_darwin

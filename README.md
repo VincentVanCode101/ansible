@@ -100,6 +100,7 @@ ansible-playbook playbooks/macos/aerospace.yml
 ansible-playbook playbooks/macos/p10k.yml
 ansible-playbook playbooks/macos/teams.yml
 ansible-playbook playbooks/macos/whatsapp.yml
+ansible-playbook playbooks/macos/firefox.yml
 
 ansible-playbook playbooks/macos/system/karabiner_elements.yml
 ```

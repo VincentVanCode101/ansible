@@ -2,6 +2,7 @@
 - name: second-brain | Setup second brain autosync service
   hosts: localhost
   become: true
+  gather_facts: true
   vars_files:
     - ../../vars.yml
 
@@ -96,10 +97,17 @@
       become: false
       when: is_darwin
 
-    - name: second-brain - macOS | Load LaunchAgent with launchctl load
-      ansible.builtin.shell: "launchctl load '{{ mac_service_dest }}'"
+    - name: Get current user UID
+      ansible.builtin.shell: id -u
+      register: user_uid
+      changed_when: false
+      when: is_darwin
+
+    - name: Load LaunchAgent via launchctl under correct user context
+      ansible.builtin.command: launchctl bootstrap gui/{{ lookup('pipe', 'id -u') }} "{{ mac_service_dest }}"
       become: false
       when: is_darwin
+
 
     - name: second-brain - macOS | Start LaunchAgent (kickstart)
       ansible.builtin.shell: "launchctl start com.secondbrain.autosync"
