@@ -15,6 +15,7 @@
       - stow
       - fswatch
       - coreutils
+      - zsh-autosuggestions
     brew_casks:
       - google-chrome
       - brave-browser
