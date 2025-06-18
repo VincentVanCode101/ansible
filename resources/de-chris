@@ -3,16 +3,20 @@ xkb_symbols "de-chris" {
 
     include "de(basic)" // Include the basic German layout
 
-    // Custom mappings for the number row
-    key <AE01> { [ exclam, 1, section ] }; // AltGr + <AE01> for §
-    key <AE02> { [ bracketleft, 2, quotedbl ] };
-    key <AE03> { [ braceleft, 3, slash ] }; // AltGr + <AE03> for /
-    key <AE04> { [ parenleft, 4, dollar ] };
-    key <AE05> { [ ampersand, 5, percent ] };
-    key <AE06> { [ equal, 6 ] };
-    key <AE07> { [ parenright, 7 ] };
-    key <AE08> { [ braceright, 8, backslash ] };
-    key <AE09> { [ bracketright, 9 ] };
-    key <AE10> { [ equal, 0 ] };
-};
+     // AltGr+7→|, Shift+AltGr+7→\
+     key <AE07> { [ 7,    slash,      bar,         backslash ] };
+    // AltGr+5→[, Shift+AltGr+5→{
+     key <AE05> { [ 5,    percent,    bracketleft, braceleft ] };
+    // AltGr+6→], Shift+AltGr+6→}
+    key <AE06> { [ 6,    ampersand,  bracketright,braceright ] };
+    // AltGr+8→{ (we duplicate into 4th level so Shift-AltGr+8 also {.)
+     key <AE08> { [ 8,    parenleft,  braceleft,   braceleft ] };
+    // AltGr+9→}
+     key <AE09> { [ 9,    parenright, braceright,  braceright ] };
 
+     // override letter keys:
+    // AltGr+L→@
+     key <AC09> { [ l, L, at, at ] };
+    // AltGr+N→~, Shift+AltGr+N also ~
+     key <AB06> { [ n, N, asciitilde, asciitilde ] };
+};
