@@ -39,7 +39,6 @@
     - name: ZSH | Ensure zsh is the default shell vol. 2
       become: true
       ansible.builtin.command: chsh -s /usr/bin/zsh
-  # -----------------------------------------------------------------------------
 
     - name: ZSH | Clone zsh-autosuggestions
       ansible.builtin.git:

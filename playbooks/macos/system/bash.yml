@@ -1,0 +1,28 @@
+---
+- name: Install and configure modern Bash on macOS
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    new_bash_path: /opt/homebrew/bin/bash
+    old_bash_path: /bin/bash
+
+  tasks:
+    - name: Ensure Homebrew bash is installed
+      command: brew install bash
+      register: brew_bash
+      changed_when: "'Already installed' not in brew_bash.stdout"
+
+    - name: Ensure new bash is in /etc/shells
+      lineinfile:
+        path: /etc/shells
+        line: "{{ new_bash_path }}"
+        state: present
+      become: yes
+
+    - name: Remove old bash (/bin/bash) from /etc/shells
+      lineinfile:
+        path: /etc/shells
+        line: "{{ old_bash_path }}"
+        state: absent
+      become: yes
