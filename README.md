@@ -112,3 +112,6 @@ ansible-playbook playbooks/macos/system/karabiner_elements.yml
 defaults write -g ApplePressAndHoldEnabled -bool false
 
 to anble my alt+e connectToContainer.sh on mac in iTerm click: -> iTerm2 -> Settings -> Profiles -> Keys -> General -> "Left option key: Esc+"
+
+## General Notes
+- For online ansible vault encryption/decryption, go to https://ansible-vault.braz.dev/
