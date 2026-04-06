@@ -53,7 +53,7 @@ for key in $(find ./resources/.ssh -name "id_*" ! -name "*.pub" -type f -exec ba
     ssh-add "$HOME/.ssh/$key"
 done
 
-ansible-playbook playbooks/vendor_agnostic/chris_config/clone_dotfiles.yml
+ansible-playbook playbooks/vendor_agnostic/chris_config/clone_dotfiles.yml #for this you need zsh installed, so if on linux, run `Applications` parts first
 ansible-playbook playbooks/vendor_agnostic/chris_config/clone_important_repos.yml
 ansible-playbook playbooks/vendor_agnostic/chris_config/setup_secondbrain.yml
 ```
