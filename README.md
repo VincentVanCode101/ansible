@@ -107,6 +107,9 @@ ansible-playbook playbooks/macos/system/karabiner_elements.yml
 
 # Ponderings
 - should I instal node? npm? nvm? cpp-comiler? clang?
+- add vim installation
+  - make it the default terminal editor
+- add installation of brightnessctl
 
 ## Mac notes:
 defaults write -g ApplePressAndHoldEnabled -bool false
