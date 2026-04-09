@@ -18,6 +18,7 @@ xcode-select --install
 mkdir -p ~/personal
 cd ~/personal
 curl https://raw.githubusercontent.com/VincentVanCode101/ansible/main/resources/setup | bash -s ~/personal/ansible
+cd ansible
 ```
 
 ### Vendor agnostic
@@ -37,10 +38,7 @@ ansible-playbook playbooks/vendor_agnostic/applications/fzf.yml # On new linux c
 #### GUIs
 ```bash
 ansible-playbook playbooks/vendor_agnostic/gui/vscode.yml
-ansible-playbook playbooks/vendor_agnostic/gui/vnc_viewer.yml
 ansible-playbook playbooks/vendor_agnostic/gui/keepassxc.yml
-ansible-playbook playbooks/vendor_agnostic/gui/anki.yml # TODO: I lied, no support for linux currently
-ansible-playbook playbooks/vendor_agnostic/gui/obsidian.yml # Not self-updating, fixed 1.8.10 version
 ```
 
 #### Chris config 
