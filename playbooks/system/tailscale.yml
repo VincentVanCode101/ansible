@@ -1,0 +1,10 @@
+---
+- name: Tailscale | Install Tailscale via Script
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Tailscale | Download and run the Tailscale installation script
+      ansible.builtin.shell:
+        cmd: "curl -fsSL https://tailscale.com/install.sh | sh"
+        creates: /usr/bin/tailscale

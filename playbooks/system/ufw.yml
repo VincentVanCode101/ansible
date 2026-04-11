@@ -1,5 +1,5 @@
 ---
-- name: UFW | Install and enable UFW firewall
+- name: UFW | Install and configure UFW firewall (Tailscale Zero Trust)
   hosts: localhost
   become: true
 
@@ -14,13 +14,21 @@
         name: ufw
         state: present
 
-    - name: UFW | Enable UFW
-      ansible.builtin.shell: |
-        sudo ufw enable
+    - name: UFW | Set default policies (Deny incoming, Allow outgoing)
+      community.general.ufw:
+        direction: "{{ item.dir }}"
+        policy: "{{ item.pol }}"
+      loop:
+        - { dir: 'incoming', pol: 'deny' }
+        - { dir: 'outgoing', pol: 'allow' }
 
-    - name: UFW | Ensure UFW is enabled
-      ansible.builtin.shell: |
-        sudo ufw status | grep -E -q 'Status: (active|aktive)'
-      register: ufw_status_check
-      changed_when: false
-      failed_when: ufw_status_check.rc != 0
+    - name: UFW | Allow traffic from Tailscale Interface
+      community.general.ufw:
+        rule: allow
+        interface: tailscale0
+        direction: in
+        comment: "Zero Trust: Trust only encrypted Tailscale traffic"
+
+    - name: UFW | Enable UFW and start on boot
+      community.general.ufw:
+        state: enabled
