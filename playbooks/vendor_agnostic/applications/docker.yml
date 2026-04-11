@@ -1,6 +1,7 @@
 ---
 - name: Docker | Install Docker (Cross-Platform)
   hosts: localhost
+  connection: local
   become: true
 
   vars_files:
@@ -9,13 +10,13 @@
   pre_tasks:
     - name: Determine OS family
       ansible.builtin.set_fact:
-        is_linux: "{{ ansible_system == 'Linux' }}"
-        is_darwin: "{{ ansible_system == 'Darwin' }}"
+        is_linux: "{{ ansible_facts['system'] == 'Linux' }}"
+        is_darwin: "{{ ansible_facts['system'] == 'Darwin' }}"
 
   tasks:
     - block:
         - name: Docker | Update APT cache (Linux)
-          include_role:
+          ansible.builtin.include_role:
             name: update_apt
 
         - name: Docker | Uninstall old versions and conflicting packages (Linux)
@@ -60,7 +61,7 @@
             | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
         - name: Docker | Update APT cache again (Linux)
-          include_role:
+          ansible.builtin.include_role:
             name: update_apt
 
         - name: Docker | Install Docker packages (Linux)

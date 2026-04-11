@@ -1,16 +1,17 @@
 ---
 - name: Okular | Install pdf-reader (okular)
   hosts: localhost
+  connection: local
   become: true
 
   pre_tasks:
     - name: Update APT cache
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
 
   tasks:
     - name: Okular | Install pdf-reader (okular)
       become: true
-      apt:
+      ansible.builtin.apt:
         name: ["okular"]
         state: present

@@ -1,6 +1,7 @@
 ---
 - name: Tailscale | Install Tailscale via Script
   hosts: localhost
+  connection: local
   become: true
 
   tasks:

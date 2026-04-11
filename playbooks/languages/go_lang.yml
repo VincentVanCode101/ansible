@@ -1,13 +1,14 @@
 ---
 - name: Go-Lang | Install the Go-Lang language
   hosts: localhost
+  connection: local
   become: true
 
   vars_files:
     - ../vars.yml
   vars:
-    goarch: "{{ ansible_machine | replace('x86_64', 'amd64') | replace('aarch64', 'arm64') }}"
-    goos: "{{ ansible_system | lower }}"
+    goarch: "{{ ansible_facts['machine'] | replace('x86_64', 'amd64') | replace('aarch64', 'arm64') }}"
+    goos: "{{ ansible_facts['system'] | lower }}"
 
   tasks:
     - name: Go-Lang | GOARCH Value
@@ -100,7 +101,7 @@
 
     - name: Go-Lang | Ensure Go paths is in .zshrc
       ansible.builtin.lineinfile:
-        path: "{{ ansible_env.HOME }}/.zshrc"
+        path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
         line: |
           export PATH="$PATH:/usr/local/go/bin"
         create: yes
@@ -109,7 +110,7 @@
 
     - name: Go-Lang | Ensure Go paths is in .bashrc
       ansible.builtin.lineinfile:
-        path: "{{ ansible_env.HOME }}/.bashrc"
+        path: "{{ ansible_facts['env']['HOME'] }}/.bashrc"
         line: |
           export PATH="$PATH:/usr/local/go/bin"
         create: yes

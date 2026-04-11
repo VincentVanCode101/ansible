@@ -1,11 +1,12 @@
 ---
-- name: dbeaver | Ensure latest DBeaver CE is installed
+- name: dbeaver | Ensure latest DBeaver CE is installed
   hosts: localhost
+  connection: local
   become: true
 
   tasks:
     - name: dbeaver | Purge any old DBeaver packages
-      apt:
+      ansible.builtin.apt:
         name:
           - dbeaver
           - dbeaver-ce
@@ -13,7 +14,7 @@
         purge: yes
 
     - name: dbeaver | Locate leftover DBeaver files
-      find:
+      ansible.builtin.find:
         paths:
           - /usr/bin
           - /usr/share
@@ -22,24 +23,24 @@
       changed_when: false
 
     - name: dbeaver | Remove leftover DBeaver files
-      file:
+      ansible.builtin.file:
         path: "{{ item.path }}"
         state: absent
       loop: "{{ leftover_dbeaver.files }}"
       when: leftover_dbeaver.matched > 0
 
-    - name: dbeaver | Download latest DBeaver CE .deb
-      get_url:
+    - name: dbeaver | Download latest DBeaver CE .deb
+      ansible.builtin.get_url:
         url: "https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb"
         dest: "/tmp/dbeaver-ce_latest_amd64.deb"
         mode: '0644'
 
-    - name: dbeaver | Install DBeaver CE from .deb
-      apt:
+    - name: dbeaver | Install DBeaver CE from .deb
+      ansible.builtin.apt:
         deb: "/tmp/dbeaver-ce_latest_amd64.deb"
         state: present
 
     - name: dbeaver | Remove downloaded .deb
-      file:
+      ansible.builtin.file:
         path: "/tmp/dbeaver-ce_latest_amd64.deb"
         state: absent

@@ -1,11 +1,12 @@
 ---
-- name: k9s | Install k9s 
+- name: k9s | Install k9s
   hosts: localhost
+  connection: local
   become: true
 
   pre_tasks:
     - name: k9s | Update APT cache
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
 
   tasks:
@@ -14,16 +15,16 @@
       file: ../vars.yml
 
   - name: k9s | wget k9s .deb (linux amd64)
-    get_url:
+    ansible.builtin.get_url:
       url: https://github.com/derailed/k9s/releases/latest/download/k9s_linux_amd64.deb
       dest: /tmp/k9s_linux_amd64.deb
 
   - name: k9s | install k9s package
-    apt:
+    ansible.builtin.apt:
       deb: /tmp/k9s_linux_amd64.deb
       state: present
 
   - name: k9s | remove k9s package after installation
-    file:
+    ansible.builtin.file:
       path: /tmp/k9s_linux_amd64.deb
       state: absent

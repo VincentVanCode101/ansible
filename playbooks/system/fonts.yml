@@ -1,21 +1,22 @@
 ---
 - name: Fonts | Install all fonts in resources/fonts system-wide
   hosts: localhost
+  connection: local
   become: true
 
   tasks:
     - name: Fonts | Ensure the custom fonts directory exists
-      file:
+      ansible.builtin.file:
         path: /usr/local/share/fonts/truetype/custom
         state: directory
         mode: '0755'
 
     - name: Fonts | Copy all fonts from resources/fonts to the custom fonts directory
-      copy:
+      ansible.builtin.copy:
         src: "{{ item }}"
         dest: /usr/local/share/fonts/truetype/custom/
         mode: '0644'
       loop: "{{ lookup('fileglob', '../../resources/fonts/*', wantlist=True) }}"
 
     - name: Fonts | Update the font cache
-      command: fc-cache -f -v
+      ansible.builtin.command: fc-cache -f -v

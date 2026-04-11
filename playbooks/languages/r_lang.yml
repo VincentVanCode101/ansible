@@ -1,51 +1,52 @@
 ---
 - name: Install R on Ubuntu
   hosts: localhost
+  connection: local
   become: true
   vars:
     cran_key_id: "E298A3A825C0D65DFD57CBB651716619E084DAB9"
-    cran_repo: "deb https://cloud.r-project.org/bin/linux/ubuntu {{ ansible_lsb.codename }}-cran40/"
+    cran_repo: "deb https://cloud.r-project.org/bin/linux/ubuntu {{ ansible_facts['lsb']['codename'] }}-cran40/"
 
   pre_tasks:
     - name: Update APT cache
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
 
   tasks:
     - name: Ensure apt-transport-https is installed
-      apt:
+      ansible.builtin.apt:
         name: apt-transport-https
         state: present
 
     - name: Add CRAN GPG key
-      apt_key:
+      ansible.builtin.apt_key:
         keyserver: keyserver.ubuntu.com
         id: "{{ cran_key_id }}"
         state: present
 
     - name: Add CRAN repository for R
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "{{ cran_repo }}"
         state: present
         filename: "cran-r"
 
     - name: Install R base package
-      apt:
+      ansible.builtin.apt:
         name: r-base
         state: present
       tags: install
 
     - name: Install R base dev package
-      apt:
+      ansible.builtin.apt:
         name: r-base-dev
         state: present
       tags: install
 
     - name: Verify R installation
-      command: R --version
+      ansible.builtin.command: R --version
       register: r_version
       changed_when: false
 
     - name: Show R version
-      debug:
+      ansible.builtin.debug:
         msg: "{{ r_version.stdout_lines[0] }}"

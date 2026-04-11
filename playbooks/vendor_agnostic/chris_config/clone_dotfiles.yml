@@ -1,24 +1,25 @@
 ---
 - name: Dotfiles | Set up my dotfiles
   hosts: localhost
+  connection: local
   vars_files:
     - ../../vars.yml
 
   pre_tasks:
     - name: Determine OS family
       ansible.builtin.set_fact:
-        is_linux: "{{ ansible_system == 'Linux' }}"
-        is_darwin: "{{ ansible_system == 'Darwin' }}"
+        is_linux: "{{ ansible_facts['system'] == 'Linux' }}"
+        is_darwin: "{{ ansible_facts['system'] == 'Darwin' }}"
 
     - name: Dotfiles | Update APT cache
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
       when: is_linux
 
   tasks:
     - name: Dotfiles |Installing stow
       become: true
-      apt: 
+      ansible.builtin.apt:
         name: stow
       when: is_linux
 
@@ -34,11 +35,11 @@
         version: main
 
     - name: Dotfiles | Clean environment by removing existing unstowing & removing dotfiles
-      shell: cd $HOME/dotfiles && ./ubuntu --clean-env
+      ansible.builtin.shell: cd $HOME/dotfiles && ./ubuntu --clean-env
       args:
         executable: /bin/zsh
 
     - name: Dotfiles | Stow dotfiles
-      shell: cd $HOME/dotfiles && ./ubuntu --install
+      ansible.builtin.shell: cd $HOME/dotfiles && ./ubuntu --install
       args:
         executable: /bin/zsh

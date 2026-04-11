@@ -9,19 +9,19 @@
 
   tasks:
     - name: Ensure Homebrew bash is installed
-      command: brew install bash
+      ansible.builtin.command: brew install bash
       register: brew_bash
       changed_when: "'Already installed' not in brew_bash.stdout"
 
     - name: Ensure new bash is in /etc/shells
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/shells
         line: "{{ new_bash_path }}"
         state: present
       become: yes
 
     - name: Remove old bash (/bin/bash) from /etc/shells
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/shells
         line: "{{ old_bash_path }}"
         state: absent

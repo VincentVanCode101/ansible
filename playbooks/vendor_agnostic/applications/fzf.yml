@@ -1,6 +1,7 @@
 ---
 - name: FZF | Install Fuzzyfinder
   hosts: localhost
+  connection: local
 
   vars_files:
     - ../../vars.yml
@@ -8,8 +9,8 @@
   pre_tasks:
     - name: Determine OS family
       ansible.builtin.set_fact:
-        is_linux: "{{ ansible_system == 'Linux' }}"
-        is_darwin: "{{ ansible_system == 'Darwin' }}"
+        is_linux: "{{ ansible_facts['system'] == 'Linux' }}"
+        is_darwin: "{{ ansible_facts['system'] == 'Darwin' }}"
 
   tasks:
     - name: FZF | Install special packages (fzf) # Apt version of fzf is way to old
@@ -20,7 +21,7 @@
         dest: "{{ lookup('env', 'HOME') }}/.fzf"
         depth: 1
       when: is_linux
-    
+
     - name: FZF - macOS | Install fzf via brew
       become: false
       become_user: "{{ current_user }}"

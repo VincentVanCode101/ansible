@@ -1,12 +1,13 @@
 ---
 - name: WhatsApp | macOS Installation via DMG
   hosts: localhost
+  connection: local
   become: true
 
   pre_tasks:
     - name: Determine if this is macOS
       ansible.builtin.set_fact:
-        is_darwin: "{{ ansible_system == 'Darwin' }}"
+        is_darwin: "{{ ansible_facts['system'] == 'Darwin' }}"
 
   tasks:
     - block:

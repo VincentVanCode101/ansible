@@ -1,16 +1,17 @@
 ---
 - name: VSCode | Cross‐Platform Installation (Linux & macOS)
   hosts: localhost
+  connection: local
   become: true
 
   pre_tasks:
     - name: VSCode | Determine OS family
       ansible.builtin.set_fact:
-        is_linux: "{{ ansible_system == 'Linux' }}"
-        is_darwin: "{{ ansible_system == 'Darwin' }}"
+        is_linux: "{{ ansible_facts['system'] == 'Linux' }}"
+        is_darwin: "{{ ansible_facts['system'] == 'Darwin' }}"
 
     - name: VSCode | Update APT cache on Debian/Ubuntu
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
       when: is_linux
 

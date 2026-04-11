@@ -1,6 +1,7 @@
 ---
 - name: Apt-Packages | Install core apt-packages
   hosts: localhost
+  connection: local
   become: true
 
   pre_tasks:
@@ -16,15 +17,15 @@
       when: is_linux_mint.stdout != ""
 
     - name: Apt-Packages | Update APT cache
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
 
   tasks:
     - name: Apt-Packages | All the apt-packages I like
       block:
         - name: Install apt packages
-          apt:
-            name: 
+          ansible.builtin.apt:
+            name:
               - snapd
               - git
               - fonts-powerline
@@ -68,6 +69,6 @@
 
     - name: Restore nosnap.pref if on Linux Mint and not already restored
       ansible.builtin.command: mv /etc/apt/preferences.d/nosnap.pref.bak /etc/apt/preferences.d/nosnap.pref
-      when: 
+      when:
         - is_linux_mint.stdout != ""
         - nosnap_pref_backup.stat.exists

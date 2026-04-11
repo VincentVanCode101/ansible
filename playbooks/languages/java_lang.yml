@@ -1,17 +1,18 @@
 ---
 - name: java | Install java
   hosts: localhost
+  connection: local
   become: true
 
   pre_tasks:
     - name: java | Update APT cache
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
 
   tasks:
     - name: java | install default jdk
-      apt:
-        name: 
+      ansible.builtin.apt:
+        name:
           - default-jdk
         state: present
         update_cache: yes

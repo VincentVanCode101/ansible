@@ -12,32 +12,32 @@
 
   tasks:
     - name: Check if Karabiner-Elements is already installed
-      command: pkgutil --pkg-info org.pqrs.Karabiner-Elements
+      ansible.builtin.command: pkgutil --pkg-info org.pqrs.Karabiner-Elements
       register: karabiner_installed
       failed_when: false
       changed_when: false
 
     - name: Download Karabiner-Elements DMG
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ dmg_url }}"
         dest: "{{ dmg_file }}"
       when: karabiner_installed.rc != 0
 
     - name: Mount the DMG
-      command: hdiutil attach "{{ dmg_file }}" -nobrowse -mountpoint "{{ mount_point }}"
+      ansible.builtin.command: hdiutil attach "{{ dmg_file }}" -nobrowse -mountpoint "{{ mount_point }}"
       when: karabiner_installed.rc != 0
 
     - name: Install Karabiner-Elements from PKG
-      command: installer -pkg "{{ mount_point }}/Karabiner-Elements.pkg" -target /
+      ansible.builtin.command: installer -pkg "{{ mount_point }}/Karabiner-Elements.pkg" -target /
       become: yes
       when: karabiner_installed.rc != 0
 
     - name: Unmount the DMG
-      command: hdiutil detach "{{ mount_point }}"
+      ansible.builtin.command: hdiutil detach "{{ mount_point }}"
       when: karabiner_installed.rc != 0
 
     - name: Remove the downloaded DMG file
-      file:
+      ansible.builtin.file:
         path: "{{ dmg_file }}"
         state: absent
       when: karabiner_installed.rc != 0

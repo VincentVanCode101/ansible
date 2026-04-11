@@ -1,6 +1,7 @@
 ---
 - name: Snap-Packages | Install applications via Snap
   hosts: localhost
+  connection: local
   become: true
 
   tasks:

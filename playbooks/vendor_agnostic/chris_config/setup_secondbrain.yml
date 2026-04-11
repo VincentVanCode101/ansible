@@ -1,6 +1,7 @@
 ---
 - name: second-brain | Setup second brain autosync service
   hosts: localhost
+  connection: local
   become: true
   gather_facts: true
   vars_files:
@@ -9,8 +10,8 @@
   pre_tasks:
     - name: Determine OS family
       ansible.builtin.set_fact:
-        is_linux: "{{ ansible_system == 'Linux' }}"
-        is_darwin: "{{ ansible_system == 'Darwin' }}"
+        is_linux: "{{ ansible_facts['system'] == 'Linux' }}"
+        is_darwin: "{{ ansible_facts['system'] == 'Darwin' }}"
 
   vars:
     # Directly clone via SSH using the alias configured in my SSH config.
@@ -26,7 +27,7 @@
     - name: Fail if unsupported OS
       ansible.builtin.fail:
         msg: "This playbook is only supported on Linux or macOS."
-      when: ansible_system not in ['Linux', 'Darwin']
+      when: ansible_facts['system'] not in ['Linux', 'Darwin']
 
     # Linux-specific tasks
     - name: second-brain - Linux | Ensure Git is installed

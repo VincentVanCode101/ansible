@@ -1,22 +1,23 @@
 ---
 - name: KeePassXC | Install KeePassXC cross-platform
   hosts: localhost
+  connection: local
   become: false
 
   pre_tasks:
     - name: Determine OS family
       ansible.builtin.set_fact:
-        is_linux: "{{ ansible_system == 'Linux' }}"
-        is_darwin: "{{ ansible_system == 'Darwin' }}"
+        is_linux: "{{ ansible_facts['system'] == 'Linux' }}"
+        is_darwin: "{{ ansible_facts['system'] == 'Darwin' }}"
 
   tasks:
     - name: Fail if unsupported OS
       ansible.builtin.fail:
         msg: "KeePassXC installation is only supported on Linux or macOS."
-      when: ansible_system not in ['Linux', 'Darwin']
+      when: ansible_facts['system'] not in ['Linux', 'Darwin']
 
     - name: KeePassXC - Linux | Update APT cache
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
       when: is_linux
 

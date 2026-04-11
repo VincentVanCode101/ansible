@@ -1,20 +1,21 @@
 ---
 - name: vim | Install vim
   hosts: localhost
+  connection: local
   become: true
 
   pre_tasks:
     - name: vim | Update APT cache
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
 
   tasks:
     - name: vim | install vim
-      apt:
-        name: 
+      ansible.builtin.apt:
+        name:
           - vim
         state: present
         update_cache: yes
 
     - name: vim | Set vim.basic as default editor
-      command: update-alternatives --set editor /usr/bin/vim.basic
+      ansible.builtin.command: update-alternatives --set editor /usr/bin/vim.basic

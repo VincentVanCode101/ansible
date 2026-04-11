@@ -1,12 +1,13 @@
 ---
 - name: Teams |macOS Installation
   hosts: localhost
+  connection: local
   become: true
 
   pre_tasks:
     - name: Determine OS family
       ansible.builtin.set_fact:
-        is_darwin: "{{ ansible_system == 'Darwin' }}"
+        is_darwin: "{{ ansible_facts['system'] == 'Darwin' }}"
 
   tasks:
     #############################################

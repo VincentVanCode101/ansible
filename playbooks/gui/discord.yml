@@ -1,6 +1,7 @@
 ---
 - name: discord | Install discord
   hosts: localhost
+  connection: local
   become: true
 
   tasks:

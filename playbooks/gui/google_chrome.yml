@@ -1,11 +1,12 @@
 ---
 - name: Google Chrome | Install Google Chrome Browser
   hosts: localhost
+  connection: local
   become: true
 
   pre_tasks:
     - name: Update APT cache
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
 
   tasks:

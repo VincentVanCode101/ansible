@@ -1,6 +1,7 @@
 ---
 - name: SSH-Keys | Setup my ssh keys
   hosts: localhost
+  connection: local
   vars_files:
     - ../../vars.yml
 
@@ -10,46 +11,46 @@
 
   tasks:
     - name: SSH-Keys | Ensure .ssh directory exists
-      file:
+      ansible.builtin.file:
         path: "{{ ssh_key_dir }}"
         state: directory
         mode: '0700'
 
     - name: SSH-Keys | Ensure .ssh/config.d directory exists
-      file:
+      ansible.builtin.file:
         path: "{{ ssh_key_dir }}/config.d"
         state: directory
         mode: '0700'
 
     - name: SSH-Keys | Install SSH keys
-      copy:
+      ansible.builtin.copy:
         src: "{{ source_key_dir }}/{{ item }}"
         dest: "{{ ssh_key_dir }}/{{ item }}"
         mode: '0600'
       loop: "{{ ssh_keys }}"
 
     - name: SSH-Keys | Install SSH public keys
-      copy:
+      ansible.builtin.copy:
         src: "{{ source_key_dir }}/{{ item }}.pub"
         dest: "{{ ssh_key_dir }}/{{ item }}.pub"
         mode: '0644'
       loop: "{{ ssh_keys }}"
 
     - name: SSH-Keys | Set authorized keys from file
-      authorized_key:
+      ansible.builtin.authorized_key:
         user: "{{ current_user }}"
         state: present
         key: "{{ lookup('file', ssh_key_dir ~ '/' ~ item ~ '.pub') }}"
       loop: "{{ ssh_keys }}"
 
     - name: SSH-Keys | Copy main SSH config file to host
-      copy:
+      ansible.builtin.copy:
         src: "{{ source_key_dir }}/config"
         dest: "{{ ssh_key_dir }}/config"
         mode: '0644'
 
     - name: SSH-Keys | Copy personal SSH config file (personal.conf) to host config.d directory
-      copy:
+      ansible.builtin.copy:
         src: "{{ source_key_dir }}/personal.conf"
         dest: "{{ ssh_key_dir }}/config.d/personal.conf"
         mode: '0644'

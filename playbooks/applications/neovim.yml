@@ -1,9 +1,11 @@
+---
 - hosts: localhost
+  connection: local
   become: true
 
   pre_tasks:
     - name: Update APT cache
-      include_role:
+      ansible.builtin.include_role:
         name: update_apt
 
   tasks:
@@ -24,7 +26,7 @@
        version: stable
 
   - name: Neovim | Install neovim deps
-    apt:
+    ansible.builtin.apt:
       name: "{{ packages }}"
       state: present
     vars:

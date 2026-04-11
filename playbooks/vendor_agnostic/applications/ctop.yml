@@ -1,6 +1,7 @@
 ---
 - name: Ctop | Install docker-ctop (Linux & macOS)
   hosts: localhost
+  connection: local
   become: true
 
   tasks:
@@ -9,9 +10,9 @@
         url: https://github.com/bcicen/ctop/releases/download/v0.7.7/ctop-0.7.7-linux-amd64
         dest: /usr/local/bin/ctop
         mode: '0755'
-      when: ansible_system == 'Linux'
+      when: ansible_facts['system'] == 'Linux'
 
     - name: Ctop | Install ctop via Homebrew (macOS)
       ansible.builtin.command: brew install ctop
       become: false
-      when: ansible_system == 'Darwin'
+      when: ansible_facts['system'] == 'Darwin'
