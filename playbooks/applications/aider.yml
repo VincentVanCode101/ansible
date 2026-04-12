@@ -6,7 +6,7 @@
   vars:
     # Use the one-liner script which handles uv + aider installation
     aider_install_script_url: "https://aider.chat/install.sh"
-    bin_dir: "{{ ansible_env.HOME }}/.local/bin"
+    bin_dir: "{{ ansible_facts['env']['HOME'] }}/.local/bin"
 
   tasks:
     - name: Aider | Check if Aider is already installed
@@ -23,11 +23,11 @@
 
     - name: Aider | Ensure ~/.local/bin is in PATH (Zsh)
       ansible.builtin.lineinfile:
-        path: "{{ ansible_env.HOME }}/.zshrc"
+        path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
         line: 'export PATH="$HOME/.local/bin:$PATH"'
         state: present
         create: true
-      when: ansible_env.SHELL == "/bin/zsh"
+      when: ansible_facts['env']['SHELL'] == "/bin/zsh"
 
     - name: Aider | Verify installation
       ansible.builtin.command:
@@ -37,4 +37,4 @@
 
     - name: Aider | Display Aider Version
       ansible.builtin.debug:
-        msg: "Aider version {{ aider_version.stdout }} is ready to roll on Lab-1."
+        msg: "Aider version {{ aider_version.stdout }} is ready."
