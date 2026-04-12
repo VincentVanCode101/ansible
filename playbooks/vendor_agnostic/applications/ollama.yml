@@ -1,0 +1,29 @@
+---
+- name: Ollama | Install native Ollama
+  hosts: localhost
+  connection: local
+
+  vars_files:
+    - ../../vars.yml
+
+  pre_tasks:
+    - name: Determine OS family
+      ansible.builtin.set_fact:
+        is_linux: "{{ ansible_facts['system'] == 'Linux' }}"
+        is_darwin: "{{ ansible_facts['system'] == 'Darwin' }}"
+
+  tasks:
+    - name: Ollama - Linux | Run official install script
+      become: true 
+      ansible.builtin.shell:
+        cmd: curl -fsSL https://ollama.com/install.sh | sh
+        creates: /usr/local/bin/ollama
+      when: is_linux
+
+    - name: Ollama - macOS | Install ollama via brew
+      become: false
+      become_user: "{{ current_user }}"
+      community.general.homebrew:
+        name: ollama
+        state: present
+      when: is_darwin
