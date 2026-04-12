@@ -1,0 +1,40 @@
+---
+- name: Aider | Install Aider using uv
+  hosts: localhost
+  connection: local
+
+  vars:
+    # Use the one-liner script which handles uv + aider installation
+    aider_install_script_url: "https://aider.chat/install.sh"
+    bin_dir: "{{ ansible_env.HOME }}/.local/bin"
+
+  tasks:
+    - name: Aider | Check if Aider is already installed
+      ansible.builtin.stat:
+        path: "{{ bin_dir }}/aider"
+      register: aider_bin
+
+    - name: Aider | Install Aider via official shell script
+      ansible.builtin.shell:
+        cmd: "curl -LsSf {{ aider_install_script_url }} | sh"
+      when: not aider_bin.stat.exists
+      register: install_output
+      changed_when: "'Installed aider' in install_output.stdout"
+
+    - name: Aider | Ensure ~/.local/bin is in PATH (Zsh)
+      ansible.builtin.lineinfile:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+        line: 'export PATH="$HOME/.local/bin:$PATH"'
+        state: present
+        create: true
+      when: ansible_env.SHELL == "/bin/zsh"
+
+    - name: Aider | Verify installation
+      ansible.builtin.command:
+        cmd: "{{ bin_dir }}/aider --version"
+      register: aider_version
+      changed_when: false
+
+    - name: Aider | Display Aider Version
+      ansible.builtin.debug:
+        msg: "Aider version {{ aider_version.stdout }} is ready to roll on Lab-1."

@@ -32,6 +32,7 @@ ansible-playbook playbooks/vendor_agnostic/system/passwordless_sudo.yml --ask-be
 ```bash
 ansible-playbook playbooks/vendor_agnostic/applications/docker.yml # Under macos it actually installs orbstack
 ansible-playbook playbooks/vendor_agnostic/applications/ctop.yml
+ansible-playbook playbooks/vendor_agnostic/applications/ollama.yml
 ansible-playbook playbooks/vendor_agnostic/applications/fzf.yml # On new linux call ~/.fzf/install (mac seemed to work right away)
 ```
 
@@ -71,6 +72,7 @@ ansible-playbook playbooks/applications/core_apt.yml
 ansible-playbook playbooks/applications/core_snap.yml
 ansible-playbook playbooks/applications/install_zsh.yml # Make sure to log-out and in again for this to take affect
 ansible-playbook playbooks/applications/neovim.yml
+ansible-playbook playbooks/applications/aider.yml
 ```
 #### GUIs
 ```bash
