@@ -51,6 +51,7 @@
               - maim # screenshots in i3
               - xfce4-appfinder
               - apache2-utils # ab apache-benchmark
+              - vim
             state: present
             update_cache: yes
       rescue:
