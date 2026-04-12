@@ -44,6 +44,7 @@ ansible-playbook playbooks/vendor_agnostic/gui/keepassxc.yml
 #### Chris config 
 ```bash
 ansible-playbook playbooks/vendor_agnostic/chris_config/setup_ssh_keys.yml --ask-vault-pass
+ansible-playbook playbooks/vendor_agnostic/chris_config/setup_ssh_config.yml
 
 eval $(ssh-agent)
 for key in $(find ./resources/.ssh -name "id_*" ! -name "*.pub" -type f -exec basename {} \;); do

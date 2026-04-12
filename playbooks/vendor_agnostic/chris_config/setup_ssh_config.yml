@@ -1,0 +1,27 @@
+---
+- name: SSH-Config | Rollout SSH configuration files
+  hosts: localhost
+  connection: local
+
+  vars:
+    ssh_key_dir: "{{ lookup('env', 'HOME') }}/.ssh"
+    source_key_dir: "{{ playbook_dir }}/../../../resources/.ssh"
+
+  tasks:
+    - name: SSH Config | Ensure .ssh/config.d directory exists
+      ansible.builtin.file:
+        path: "{{ ssh_key_dir }}/config.d"
+        state: directory
+        mode: '0700'
+
+    - name: SSH Config | Copy main SSH config file
+      ansible.builtin.copy:
+        src: "{{ source_key_dir }}/config"
+        dest: "{{ ssh_key_dir }}/config"
+        mode: '0644'
+
+    - name: SSH Config | Copy personal SSH config file
+      ansible.builtin.copy:
+        src: "{{ source_key_dir }}/personal.conf"
+        dest: "{{ ssh_key_dir }}/config.d/personal.conf"
+        mode: '0644'
