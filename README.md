@@ -120,3 +120,12 @@ to anble my alt+e connectToContainer.sh on mac in iTerm click: -> iTerm2 -> Sett
 
 ## General Notes
 - For online ansible vault encryption/decryption, go to https://ansible-vault.braz.dev/
+
+## Todos
+- [ ] install uv: curl -LsSf https://astral.sh/uv/install.sh | sh
+- [ ] install claude: curl -fsSL https://claude.ai/install.sh | bash
+  - echo '{"hasCompletedOnboarding": true}' > ~/.claude.json (if want to use with local llm)
+- [ ] install code-review-graph:
+  - uv tool install code-review-graph
+  - uv pip install "code-review-graph[communities]"
+- [ ] install commitizen: uv tool install commitizen && uv tool upgrade commitizen
