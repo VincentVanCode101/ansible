@@ -1,0 +1,41 @@
+---
+- name: TLP | Configure 80% battery charge cap
+  hosts: localhost
+  connection: local
+  become: true
+
+  pre_tasks:
+    - name: TLP | Update APT cache
+      ansible.builtin.include_role:
+        name: update_apt
+
+  tasks:
+    - name: TLP | Set START_CHARGE_THRESH_BAT0
+      ansible.builtin.lineinfile:
+        path: /etc/tlp.conf
+        regexp: '^#?START_CHARGE_THRESH_BAT0='
+        line: 'START_CHARGE_THRESH_BAT0=75'
+
+    - name: TLP | Set STOP_CHARGE_THRESH_BAT0
+      ansible.builtin.lineinfile:
+        path: /etc/tlp.conf
+        regexp: '^#?STOP_CHARGE_THRESH_BAT0='
+        line: 'STOP_CHARGE_THRESH_BAT0=80'
+
+    - name: TLP | Set START_CHARGE_THRESH_BAT1
+      ansible.builtin.lineinfile:
+        path: /etc/tlp.conf
+        regexp: '^#?START_CHARGE_THRESH_BAT1='
+        line: 'START_CHARGE_THRESH_BAT1=75'
+
+    - name: TLP | Set STOP_CHARGE_THRESH_BAT1
+      ansible.builtin.lineinfile:
+        path: /etc/tlp.conf
+        regexp: '^#?STOP_CHARGE_THRESH_BAT1='
+        line: 'STOP_CHARGE_THRESH_BAT1=80'
+
+    - name: TLP | Enable and start tlp service
+      ansible.builtin.systemd:
+        name: tlp
+        enabled: true
+        state: started

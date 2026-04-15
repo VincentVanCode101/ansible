@@ -52,6 +52,8 @@
               - xfce4-appfinder
               - apache2-utils # ab apache-benchmark
               - vim
+              - tlp # battery management daemon
+              - tlp-rdw # radio device wizard for tlp
             state: present
             update_cache: yes
       rescue:
