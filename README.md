@@ -64,6 +64,7 @@ ansible-playbook playbooks/vendor_agnostic/chris_config/setup_secondbrain.yml
 ansible-playbook playbooks/system/i3.yml # Log out and in again to choose the i3 window-manager option
 ansible-playbook playbooks/system/ufw.yml
 ansible-playbook playbooks/system/tailscale.yml # run "sudo tailscale up" to start
+ansible-playbook playbooks/system/configure_tlp_80_percent_charge_cap.yml
 ```
 
 #### Applications
