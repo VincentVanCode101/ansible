@@ -129,3 +129,5 @@ to anble my alt+e connectToContainer.sh on mac in iTerm click: -> iTerm2 -> Sett
   - uv tool install code-review-graph
   - uv pip install "code-review-graph[communities]"
 - [ ] install commitizen: uv tool install commitizen && uv tool upgrade commitizen
+- [ ] install caveman:
+claude plugin marketplace add JuliusBrussee/caveman && claude plugin install caveman@caveman
