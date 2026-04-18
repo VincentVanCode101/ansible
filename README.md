@@ -61,10 +61,17 @@ ansible-playbook playbooks/vendor_agnostic/chris_config/setup_secondbrain.yml
 ### Linux
 #### System
 ```bash
-ansible-playbook playbooks/system/i3.yml # Log out and in again to choose the i3 window-manager option
+ansible-playbook playbooks/system/i3.yml       # log out and back in to select i3
 ansible-playbook playbooks/system/ufw.yml
-ansible-playbook playbooks/system/tailscale.yml # run "sudo tailscale up" to start
+ansible-playbook playbooks/system/tailscale.yml # then run: sudo tailscale up
 ansible-playbook playbooks/system/configure_tlp_80_percent_charge_cap.yml
+```
+
+#### System (Home Lab / Server)
+```bash
+ansible-playbook playbooks/system/ufw_docker.yml                            # UFW rules for Docker/NPM networking
+ansible-playbook playbooks/system/dns_pihole.yml                            # free port 53 for Pi-hole (disables systemd-resolved)
+ansible-playbook playbooks/system/ip_forwarding.yml -e ip_forwarding=true  # enable kernel forwarding for Tailscale Subnet Routing
 ```
 
 #### Applications
@@ -107,6 +114,35 @@ ansible-playbook playbooks/macos/firefox.yml
 
 ansible-playbook playbooks/macos/system/karabiner_elements.yml
 ```
+
+---
+
+# Ansible Architecture: Server vs. Client
+
+Each playbook does exactly one thing and runs on `localhost` — you choose which ones to run on which machine. No inventory, no host mapping.
+
+| Concern | Playbook | Server | Workstation |
+|---|---|---|---|
+| UFW baseline | `system/ufw.yml` | run | run |
+| UFW Docker rules | `system/ufw_docker.yml` | run | optional |
+| Free port 53 for Pi-hole | `system/dns_pihole.yml` | run | — |
+| IP forwarding | `system/ip_forwarding.yml` | `-e ip_forwarding=true` | `-e ip_forwarding=false` |
+
+## Why servers disable `systemd-resolved` (Port 53 conflict)
+
+Pi-hole must bind to **port 53** on all interfaces. Ubuntu ships with `systemd-resolved` already listening on `127.0.0.53:53`, causing a "address already in use" failure. `dns_pihole.yml`:
+
+1. Stops and disables `systemd-resolved`.
+2. Removes the managed `/etc/resolv.conf` symlink.
+3. Writes a static `/etc/resolv.conf` pointing at Cloudflare (`1.1.1.1`) as an upstream fallback while Pi-hole is down.
+
+On a workstation there is no Pi-hole, so `systemd-resolved` stays — it also handles Tailscale's Split DNS (Magic DNS, custom search domains) transparently.
+
+## Why only the server needs IP Forwarding
+
+Tailscale Subnet Routing lets `lab-1` advertise its LAN to the tailnet. The kernel must forward packets between interfaces (`tailscale0` ↔ `eth0`), which requires `net.ipv4.ip_forward=1`. Enabling this on a workstation would let it route arbitrary traffic with no benefit — `ip_forwarding.yml -e ip_forwarding=false` explicitly disables it.
+
+---
 
 # Ponderings
 - should I instal node? npm? nvm? cpp-comiler? clang?

@@ -1,0 +1,29 @@
+---
+# Run this on a server where Pi-hole owns port 53.
+# systemd-resolved holds 127.0.0.53:53 by default and must be disabled first.
+- name: DNS | Disable systemd-resolved and set static resolv.conf for Pi-hole
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: DNS | Stop and disable systemd-resolved
+      ansible.builtin.systemd:
+        name: systemd-resolved
+        state: stopped
+        enabled: false
+
+    - name: DNS | Remove managed resolv.conf symlink
+      ansible.builtin.file:
+        path: /etc/resolv.conf
+        state: absent
+
+    - name: DNS | Write static resolv.conf (upstream fallback while Pi-hole is down)
+      ansible.builtin.copy:
+        dest: /etc/resolv.conf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          nameserver 1.1.1.1
+          nameserver 1.0.0.1

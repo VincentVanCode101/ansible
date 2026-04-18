@@ -1,0 +1,25 @@
+---
+# Required for Tailscale Subnet Routing.
+# Pass: -e ip_forwarding=true  (server / subnet router)
+#       -e ip_forwarding=false (client / security hardening)
+- name: Network | Configure kernel IP forwarding
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Network | Set IPv4 forwarding
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: "{{ '1' if ip_forwarding | default(false) | bool else '0' }}"
+        state: present
+        sysctl_set: true
+        reload: true
+
+    - name: Network | Set IPv6 forwarding
+      ansible.posix.sysctl:
+        name: net.ipv6.conf.all.forwarding
+        value: "{{ '1' if ip_forwarding | default(false) | bool else '0' }}"
+        state: present
+        sysctl_set: true
+        reload: true

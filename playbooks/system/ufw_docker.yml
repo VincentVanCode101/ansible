@@ -1,0 +1,19 @@
+---
+- name: UFW | Allow Docker networking (docker0 interface + subnet)
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: UFW | Allow traffic on docker0 interface
+      community.general.ufw:
+        rule: allow
+        interface: docker0
+        direction: in
+        comment: "Docker: allow container-to-host traffic"
+
+    - name: UFW | Allow traffic from Docker subnet
+      community.general.ufw:
+        rule: allow
+        src: '172.17.0.0/16'
+        comment: "Docker: allow NPM/container subnet"
